@@ -1,0 +1,4 @@
+verbosity=1
+console=display
+extraargs=coherent_pool=8M console=ttyFIQ0,1500000 clk_ignore_unused
+bootlogo=false
