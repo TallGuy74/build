@@ -1,7 +1,7 @@
 From fdc85d099b654a4d596dbb5b5eb40d0fbc78fd54 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:17:19 +0200
-Subject: [PATCH 11/36] ARM: configs: Add rk3506_minimal.config fragment
+Subject: [PATCH 11/37] ARM: configs: Add rk3506_minimal.config fragment
 
 Add a config fragment to be merged over multi_v7_defconfig for RK3506
 console bring-up:

@@ -1,0 +1,26 @@
+From 13f82a3ec3704418f72f4cedb8f58a3531ccea1d Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 21:26:55 +0100
+Subject: [PATCH 37/37] ARM: dts: rockchip: lyra-plc: Rotate the ST7789V
+ framebuffer to landscape
+
+The 170x320 glass is mounted with its long side horizontal; without a
+rotation the console runs top to bottom. fbtft's rotate property turns
+the framebuffer by 90 degrees so fbcon and a panel application get a
+landscape 320x170 surface.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 44addef36..5fe90c650 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -247,6 +247,8 @@ display@0 {
+ 		/* fbtft (staging) properties; the sitronix,st7789v panel schema does not know them */
+ 		buswidth = <8>;
+ 		fps = <60>;
++		/* 170x320 glass mounted landscape: rotate the framebuffer (degrees) */
++		rotate = <90>;
+ 		dc-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+ 		reset-gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+ 	};

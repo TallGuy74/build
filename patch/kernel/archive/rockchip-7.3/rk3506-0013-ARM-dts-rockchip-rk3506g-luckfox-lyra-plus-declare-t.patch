@@ -1,7 +1,7 @@
 From a927f3d134ac51bd552e373d78220ac9df1ac3c4 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 2 Sep 2026 20:09:27 +0200
-Subject: [PATCH 13/36] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: declare
+Subject: [PATCH 13/37] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: declare
  the memory Linux may use
 
 The board does not boot. It stops after "Starting kernel ..." without

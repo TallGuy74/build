@@ -1,7 +1,7 @@
 From 7200638d93035c4a50174ab2c336766844373d4a Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Thu, 3 Sep 2026 08:06:50 +0200
-Subject: [PATCH 17/36] ARM: dts: rockchip: rk3506: Add the USB OTG0 controller
+Subject: [PATCH 17/37] ARM: dts: rockchip: rk3506: Add the USB OTG0 controller
 
 The RK3506 has two DWC2 USB 2.0 OTG controllers. Describe the first one,
 the port that boards actually expose.
