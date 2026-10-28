@@ -25,8 +25,8 @@ function post_family_config__luckfox-lyra-plc_bootenv() {
 # Drivers the PLC needs that the shared rk35xx vendor config leaves out: the 1.9" ST7789V SPI panel (fbtft),
 # Hynitron CST816S touch (backported from mainline), PCF8563 RTC, SHTC3 sensor, the rk3576-type CAN-FD block.
 function custom_kernel_config__luckfox-lyra-plc_drivers() {
-	opts_y+=(FB FB_TFT FB_TFT_ST7789V FRAMEBUFFER_CONSOLE LOGO LOGO_LINUX_CLUT224
+	opts_y+=(VT VT_CONSOLE FB FB_TFT FB_TFT_ST7789V FRAMEBUFFER_CONSOLE LOGO LOGO_LINUX_CLUT224
 		TOUCHSCREEN_HYNITRON_CST816X RTC_DRV_PCF8563 HWMON SENSORS_SHTC1
 		GPIO_CDEV GPIO_CDEV_V1 OF_OVERLAY)
-	opts_m+=(CAN_RAW CAN_BCM CAN_DEV CANFD_ROCKCHIP CANFD_RK3576)
+	opts_m+=(CAN CAN_RAW CAN_BCM CAN_DEV CAN_CALC_BITTIMING CAN_ROCKCHIP CAN_RK3576)
 }
