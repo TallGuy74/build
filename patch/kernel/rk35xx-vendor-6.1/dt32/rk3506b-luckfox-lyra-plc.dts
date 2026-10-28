@@ -1,0 +1,390 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Luckfox Lyra PLC (RK3506B): DIN-rail controller with a 1.9" ST7789V SPI panel, CST816S touch, two RMII
+ * Ethernet ports, RS232 (UART1), RS485/RS422 (UART2), CAN0, two relays, PCF8563 RTC and SHTC3 sensor.
+ * Written from the device tree the stock Luckfox image runs (2026-07-28 build), on top of Rockchip's rk3506.dtsi.
+ * The PoE and non-PoE variants are identical to software.
+ */
+
+/dts-v1/;
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include <dt-bindings/suspend/rockchip-rk3506.h>
+#include "rk3506.dtsi"
+
+/ {
+	model = "Luckfox Lyra PLC";
+	compatible = "luckfox,lyra-plc", "rockchip,rk3506";
+
+	aliases {
+		ethernet0 = &gmac0;
+		ethernet1 = &gmac1;
+		mmc0 = &mmc;
+	};
+
+	chosen {
+		stdout-path = "serial0:1500000n8";
+	};
+
+	adc_keys: adc-keys {
+		compatible = "adc-keys";
+		io-channels = <&saradc 1>;
+		io-channel-names = "buttons";
+		keyup-threshold-microvolt = <1800000>;
+		poll-interval = <100>;
+
+		button-user {
+			label = "USER";
+			linux,code = <KEY_VENDOR>;
+			press-threshold-microvolt = <0>;
+		};
+	};
+
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm0_4ch_2 0 25000 1>;
+		brightness-levels = <
+			  0  20  20  21  21  22  22  23
+			 23  24  24  25  25  26  26  27
+			 27  28  28  29  29  30  30  31
+			 31  32  32  33  33  34  34  35
+			 35  36  36  37  37  38  38  39
+			 40  41  42  43  44  45  46  47
+			 48  49  50  51  52  53  54  55
+			 56  57  58  59  60  61  62  63
+			 64  65  66  67  68  69  70  71
+			 72  73  74  75  76  77  78  79
+			 80  81  82  83  84  85  86  87
+			 88  89  90  91  92  93  94  95
+			 96  97  98  99 100 101 102 103
+			104 105 106 107 108 109 110 111
+			112 113 114 115 116 117 118 119
+			120 121 122 123 124 125 126 127
+			128 129 130 131 132 133 134 135
+			136 137 138 139 140 141 142 143
+			144 145 146 147 148 149 150 151
+			152 153 154 155 156 157 158 159
+			160 161 162 163 164 165 166 167
+			168 169 170 171 172 173 174 175
+			176 177 178 179 180 181 182 183
+			184 185 186 187 188 189 190 191
+			192 193 194 195 196 197 198 199
+			200 201 202 203 204 205 206 207
+			208 209 210 211 212 213 214 215
+			216 217 218 219 220 221 222 223
+			224 225 226 227 228 229 230 231
+			232 233 234 235 236 237 238 239
+			240 241 242 243 244 245 246 247
+			248 249 250 251 252 253 254 255
+		>;
+		default-brightness-level = <200>;
+		status = "okay";
+	};
+
+	fiq_debugger: fiq-debugger {
+		compatible = "rockchip,fiq-debugger";
+		rockchip,serial-id = <0>;
+		rockchip,wake-irq = <0>;
+		rockchip,irq-mode-enable = <1>;
+		rockchip,baudrate = <1500000>;
+		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	leds: leds {
+		compatible = "gpio-leds";
+
+		work_led: work-led {
+			gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "heartbeat";
+		};
+	};
+
+	vcc_sys: vcc-sys {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_sys";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+	};
+
+	vcc_3v3: vcc-3v3 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_3v3";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		vin-supply = <&vcc_sys>;
+	};
+
+	vcc_1v8: vcc-1v8 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_1v8";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		vin-supply = <&vcc_3v3>;
+	};
+
+	vcc_ddr: vcc-ddr {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_ddr";
+		regulator-always-on;
+		regulator-boot-on;
+		vin-supply = <&vcc_sys>;
+	};
+
+	vdd_0v9: vdd-0v9 {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_0v9";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <900000>;
+		regulator-max-microvolt = <900000>;
+		vin-supply = <&vcc_sys>;
+	};
+
+	/* CPU core supply is a PWM-controlled regulator on PWM0 channel 0 (RM_IO21). */
+	vdd_cpu: vdd-cpu {
+		compatible = "pwm-regulator";
+		pwms = <&pwm0_4ch_0 0 5000 1>;
+		regulator-name = "vdd_cpu";
+		regulator-min-microvolt = <710000>;
+		regulator-max-microvolt = <1206000>;
+		regulator-init-microvolt = <1011000>;
+		regulator-always-on;
+		regulator-boot-on;
+		vin-supply = <&vcc_sys>;
+	};
+
+	/* AIC8800DC Wi-Fi/BT combo on USB; only the BT power enable is a GPIO. */
+	wireless_bluetooth: wireless-bluetooth {
+		compatible = "bluetooth-platdata";
+		BT,power_gpio = <&gpio1 RK_PC5 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+};
+
+&cpu0 {
+	cpu-supply = <&vdd_cpu>;
+	status = "okay";
+};
+
+&cma {
+	size = <0x2000000>;
+};
+
+/* CAN0 on RM_IO12/13, 120 ohm termination by switch on the terminal block. */
+&can0 {
+	assigned-clocks = <&cru CLK_CAN0>;
+	assigned-clock-rates = <200000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io12_can0_tx &rm_io13_can0_rx>;
+	status = "okay";
+};
+
+/* Two RMII PHYs on a shared 25 MHz clock output; eth0 reset is active low, eth1 reset active high. */
+&gmac0 {
+	phy-mode = "rmii";
+	clock_in_out = "output";
+	assigned-clocks = <&cru CLK_MAC_OUT>;
+	assigned-clock-rates = <25000000>;
+	snps,reset-gpio = <&gpio1 RK_PC0 GPIO_ACTIVE_LOW>;
+	snps,reset-active-low;
+	pinctrl-names = "default";
+	pinctrl-0 = <&eth_clk0_25m_out_pins &eth_rmii0_miim_pins &eth_rmii0_tx_bus2_pins
+		     &eth_rmii0_rx_bus2_pins &eth_rmii0_clk_pins &rmii0_rstn>;
+	phy-handle = <&rmii_phy0>;
+	status = "okay";
+};
+
+&mdio0 {
+	rmii_phy0: phy@1 {
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <0x1>;
+		assigned-clocks = <&cru CLK_MAC_OUT>;
+		assigned-clock-rates = <25000000>;
+	};
+};
+
+&gmac1 {
+	phy-mode = "rmii";
+	clock_in_out = "output";
+	assigned-clocks = <&cru CLK_MAC_OUT>;
+	assigned-clock-rates = <25000000>;
+	snps,reset-gpio = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
+	snps,reset-active-high;
+	pinctrl-names = "default";
+	pinctrl-0 = <&eth_clk1_25m_out_pins &eth_rmii1_miim_pins &eth_rmii1_tx_bus2_pins
+		     &eth_rmii1_rx_bus2_pins &eth_rmii1_clk_pins &rmii1_rstn>;
+	phy-handle = <&rmii_phy1>;
+	status = "okay";
+};
+
+&mdio1 {
+	rmii_phy1: phy@1 {
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <0x1>;
+		assigned-clocks = <&cru CLK_MAC_OUT>;
+		assigned-clock-rates = <25000000>;
+	};
+};
+
+/* Relays on GPIO0_C1/C2, RS485 transmit enable on GPIO0_B7: plain GPIOs, driven from user space. */
+&gpio0 {
+	gpio-line-names =
+		"lcd-reset", "", "lcd-dc", "", "", "", "touch-reset", "touch-irq",
+		"", "", "", "", "", "", "", "rs485-txen",
+		"", "relay0", "relay1", "", "", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+/* External I2C header */
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io30_i2c0_scl &rm_io31_i2c0_sda>;
+	status = "okay";
+};
+
+&i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io9_i2c1_scl &rm_io8_i2c1_sda>;
+	status = "okay";
+
+	cst816s: touchscreen@15 {
+		compatible = "hynitron,cst816s";
+		reg = <0x15>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <RK_PA7 IRQ_TYPE_EDGE_FALLING>;
+		reset-gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&i2c2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io28_i2c2_scl &rm_io29_i2c2_sda>;
+	status = "okay";
+
+	pcf8563: rtc@51 {
+		compatible = "nxp,pcf8563";
+		reg = <0x51>;
+		#clock-cells = <0>;
+	};
+
+	shtc3: humidity-sensor@70 {
+		compatible = "sensirion,shtc3";
+		reg = <0x70>;
+	};
+};
+
+/* 8 GB eMMC, 4-bit DDR52 as the stock image runs it */
+&mmc {
+	max-frequency = <52000000>;
+	bus-width = <4>;
+	mmc-ddr-1_8v;
+	supports-emmc;
+	cap-mmc-highspeed;
+	disable-wp;
+	non-removable;
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc_clk_pins &sdmmc_cmd_pins &sdmmc_bus4_pins>;
+	status = "okay";
+};
+
+&pwm0_4ch_0 {
+	pinctrl-names = "active";
+	pinctrl-0 = <&rm_io21_pwm0_ch0>;
+	status = "okay";
+};
+
+&pwm0_4ch_2 {
+	pinctrl-names = "active";
+	pinctrl-0 = <&rm_io5_pwm0_ch2>;
+	status = "okay";
+};
+
+&saradc {
+	vref-supply = <&vcc_1v8>;
+	status = "okay";
+};
+
+/* 1.9" 170x320 ST7789V panel through the fbtft driver: /dev/fb0, RGB565 */
+&spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io1_spi0_clk &rm_io4_spi0_mosi &rm_io3_spi0_csn0>;
+	status = "okay";
+
+	panel: fbtft@0 {
+		compatible = "sitronix,st7789v";
+		reg = <0>;
+		spi-max-frequency = <50000000>;
+		fps = <60>;
+		buswidth = <8>;
+		dc-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&tsadc {
+	pinctrl-names = "gpio", "otpout";
+	pinctrl-0 = <&wdt_tsadc_gpio>;
+	pinctrl-1 = <&rm_io21_wdt_tsadc_shut>;
+	status = "okay";
+};
+
+/* UART1 = RS232, UART2 = RS485/RS422 (TX enable on GPIO0_B7) */
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io10_uart1_tx &rm_io11_uart1_rx>;
+	status = "okay";
+};
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rm_io14_uart2_tx &rm_io16_uart2_rx>;
+	status = "okay";
+};
+
+&usb20_otg0 {
+	dr_mode = "peripheral";
+	status = "okay";
+};
+
+&usb20_otg1 {
+	dr_mode = "host";
+	status = "okay";
+};
+
+&usb2phy {
+	status = "okay";
+};
+
+&u2phy_otg0 {
+	status = "okay";
+};
+
+&u2phy_otg1 {
+	status = "okay";
+};
+
+&pinctrl {
+	gmac {
+		rmii0_rstn: rmii0-rstn {
+			rockchip,pins = <1 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		rmii1_rstn: rmii1-rstn {
+			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+	tsadc {
+		wdt_tsadc_gpio: wdt-tsadc-gpio {
+			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};
