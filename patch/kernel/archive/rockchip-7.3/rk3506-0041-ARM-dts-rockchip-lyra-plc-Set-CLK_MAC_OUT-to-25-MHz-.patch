@@ -1,0 +1,37 @@
+From eec2e66eadeb6d024432bebcb09b8c4fe925af1f Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 23:29:29 +0100
+Subject: [PATCH 41/41] ARM: dts: rockchip: lyra-plc: Set CLK_MAC_OUT to 25 MHz
+ on the GMAC nodes
+
+The RMII PHYs take their 25 MHz reference from CLK_MAC_OUT. The rate was
+assigned on the PHY nodes, but the MDIO core does not apply assigned
+clock rates, so the clock ran at whatever the bootloader left: the link
+negotiated 10BASE-T only and frames longer than ~100 bytes were lost.
+Assign the rate on the GMAC platform devices, where the driver core does
+apply it, as the vendor tree does.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 525992fd4..a0c5317fd 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -114,6 +114,8 @@ vdd_cpu: regulator-vdd-cpu {
+ };
+ 
+ &gmac0 {
++	assigned-clocks = <&cru CLK_MAC_OUT>;
++	assigned-clock-rates = <25000000>;
+ 	clock_in_out = "output";
+ 	phy-handle = <&rmii_phy0>;
+ 	phy-mode = "rmii";
+@@ -135,6 +137,8 @@ rmii_phy0: ethernet-phy@1 {
+ };
+ 
+ &gmac1 {
++	assigned-clocks = <&cru CLK_MAC_OUT>;
++	assigned-clock-rates = <25000000>;
+ 	clock_in_out = "output";
+ 	phy-handle = <&rmii_phy1>;
+ 	phy-mode = "rmii";

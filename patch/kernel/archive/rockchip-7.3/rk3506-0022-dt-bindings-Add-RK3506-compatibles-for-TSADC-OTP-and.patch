@@ -1,7 +1,7 @@
 From 9f9ab1d1a5a685ae0a0d45632c8c392b05ba269d Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:04:24 +0100
-Subject: [PATCH 22/40] dt-bindings: Add RK3506 compatibles for TSADC, OTP and
+Subject: [PATCH 22/41] dt-bindings: Add RK3506 compatibles for TSADC, OTP and
  USB2 PHY, and the Luckfox Lyra PLC board
 
 rockchip,rk3506-tsadc, rockchip,rk3506-otp (same clock set as rk3528) and
