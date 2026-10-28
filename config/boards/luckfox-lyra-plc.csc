@@ -22,7 +22,10 @@ function post_family_config__luckfox-lyra-plc_bootenv() {
 	BOOTENV_FILE='rk3506-luckfox-lyra-plc.txt'
 	# edge: the CPU core voltage is a PWM output (pwm0 ch0); until the PWM regulator path is verified on the board,
 	# keep the clock framework from gating clocks nobody claimed at boot.
-	[[ "${BRANCH}" == "edge" ]] && BOOTENV_FILE='rk3506-luckfox-lyra-plc-edge.txt'
+	if [[ "${BRANCH}" == "edge" ]]; then
+		BOOTENV_FILE='rk3506-luckfox-lyra-plc-edge.txt'
+	fi
+	return 0
 }
 
 # edge = mainline 7.3 with the RK3506 patch series in patch/kernel/archive/rockchip-7.3 (rk3506-*.patch): the
@@ -31,7 +34,7 @@ function post_family_config__luckfox-lyra-plc_bootenv() {
 # Drivers the PLC needs that the shared rk35xx vendor config leaves out: the 1.9" ST7789V SPI panel (fbtft),
 # Hynitron CST816S touch (backported from mainline), PCF8563 RTC, SHTC3 sensor, the rk3576-type CAN-FD block.
 function custom_kernel_config__luckfox-lyra-plc_drivers() {
-	[[ "${BRANCH}" == "edge" ]] && opts_y+=(MMC_DW MMC_DW_ROCKCHIP USB_DWC2 USB_DWC2_DUAL_ROLE PHY_ROCKCHIP_INNO_USB2 STMMAC_ETH DWMAC_ROCKCHIP SPI_ROCKCHIP I2C_RK3X KEYBOARD_ADC ROCKCHIP_SARADC ROCKCHIP_THERMAL DW_WATCHDOG NVMEM_ROCKCHIP_OTP PINCTRL_ROCKCHIP GPIO_ROCKCHIP CLK_RK3506 LEDS_GPIO MFD_ROCKCHIP_MFPWM PWM PWM_ROCKCHIP_V4 BACKLIGHT_CLASS_DEVICE BACKLIGHT_PWM REGULATOR_PWM)
+	[[ "${BRANCH}" != "edge" ]] || opts_y+=(MMC_DW MMC_DW_ROCKCHIP USB_DWC2 USB_DWC2_DUAL_ROLE PHY_ROCKCHIP_INNO_USB2 STMMAC_ETH DWMAC_ROCKCHIP SPI_ROCKCHIP I2C_RK3X KEYBOARD_ADC ROCKCHIP_SARADC ROCKCHIP_THERMAL DW_WATCHDOG NVMEM_ROCKCHIP_OTP PINCTRL_ROCKCHIP GPIO_ROCKCHIP CLK_RK3506 LEDS_GPIO MFD_ROCKCHIP_MFPWM PWM PWM_ROCKCHIP_V4 BACKLIGHT_CLASS_DEVICE BACKLIGHT_PWM REGULATOR_PWM)
 	opts_y+=(VT VT_CONSOLE FB FB_TFT FB_TFT_ST7789V FRAMEBUFFER_CONSOLE LOGO LOGO_LINUX_CLUT224
 		TOUCHSCREEN_HYNITRON_CST816X RTC_DRV_PCF8563 HWMON SENSORS_SHTC1
 		GPIO_CDEV GPIO_CDEV_V1 OF_OVERLAY)
