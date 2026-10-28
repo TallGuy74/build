@@ -1,7 +1,7 @@
 From 139642d1db24b8e115e4ae4ae174cdaaa816896b Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:25:14 +0100
-Subject: [PATCH 31/38] pwm: rockchip-v4: Use the of_node_reused accessor
+Subject: [PATCH 31/40] pwm: rockchip-v4: Use the of_node_reused accessor
 
 Since 7.1 the flag lives in a device flag word behind
 dev_set_of_node_reused(); the posted v5 driver still assigns the

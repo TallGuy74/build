@@ -1,0 +1,27 @@
+From dd993affe31ea812cb2b73139bc5441e82a28bde Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 22:44:33 +0100
+Subject: [PATCH 40/40] ARM: dts: rockchip: lyra-plc: Describe the 170x320
+ glass of the ST7789V panel
+
+Give fbtft the real panel size and the column offset at which the 1.9"
+glass sits in the controller's RAM, so the framebuffer is 320x170 after
+rotation instead of 320x240 with 70 invisible lines.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 58da1d23e..525992fd4 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -249,6 +249,10 @@ display@0 {
+ 		/* fbtft (staging) properties; the sitronix,st7789v panel schema does not know them */
+ 		buswidth = <8>;
+ 		fps = <60>;
++		/* 1.9" 170x320 glass at columns 35..204 of the controller's 240x320 RAM */
++		width = <170>;
++		height = <320>;
++		col-offset = <35>;
+ 		/* 170x320 glass mounted landscape: rotate the framebuffer (degrees) */
+ 		rotate = <270>;
+ 		dc-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;

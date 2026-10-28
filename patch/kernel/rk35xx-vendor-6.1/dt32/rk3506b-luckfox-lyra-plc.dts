@@ -322,7 +322,11 @@
 		spi-max-frequency = <50000000>;
 		fps = <60>;
 		buswidth = <8>;
-		/* 170x320 glass mounted landscape: rotate the framebuffer (fbtft rotate, degrees) */
+		/* 1.9" 170x320 glass at columns 35..204 of the controller's 240x320 RAM (col-offset: our fbtft patch) */
+		width = <170>;
+		height = <320>;
+		col-offset = <35>;
+		/* mounted landscape: rotate the framebuffer (fbtft rotate, degrees) */
 		rotate = <270>;
 		dc-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
 		reset-gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;

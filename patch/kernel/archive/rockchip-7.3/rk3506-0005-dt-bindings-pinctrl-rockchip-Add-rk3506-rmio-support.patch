@@ -1,7 +1,7 @@
 From 2fcd138b565fb920b533e819681a038d7babdc7e Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:55 +0800
-Subject: [PATCH 05/38] dt-bindings: pinctrl: rockchip: Add rk3506 rmio support
+Subject: [PATCH 05/40] dt-bindings: pinctrl: rockchip: Add rk3506 rmio support
 
 The RK3506 SoC introduces a secondary block-level pinmux controller called
 RMIO (Rockchip Matrix I/O). When the primary IOMUX is selected to a
