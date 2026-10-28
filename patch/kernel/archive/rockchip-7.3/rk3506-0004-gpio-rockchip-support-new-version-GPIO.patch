@@ -1,7 +1,7 @@
 From 3581dc833016c48750b9edccd7995686d582b366 Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:54 +0800
-Subject: [PATCH 04/41] gpio: rockchip: support new version GPIO
+Subject: [PATCH 04/46] gpio: rockchip: support new version GPIO
 
 Support the next version GPIO controller on SoCs like rv1126b.
 

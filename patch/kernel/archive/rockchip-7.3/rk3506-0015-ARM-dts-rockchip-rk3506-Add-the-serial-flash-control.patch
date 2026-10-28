@@ -1,7 +1,7 @@
 From 41f832439aa0c1c8cc42c655b3f040573c0d46cd Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 2 Sep 2026 22:03:49 +0200
-Subject: [PATCH 15/41] ARM: dts: rockchip: rk3506: Add the serial flash
+Subject: [PATCH 15/46] ARM: dts: rockchip: rk3506: Add the serial flash
  controller
 
 The RK3506 boots from SPI NAND, so describing the controller is what stands

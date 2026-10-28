@@ -1,0 +1,26 @@
+From 065773a511e3a201a9b862b1c13c9a27c2e32260 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 23:50:58 +0100
+Subject: [PATCH 46/46] ARM: configs: rk3506_plc: cpufreq-dt, CPU thermal,
+ rfkill-gpio
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/configs/rk3506_plc.config b/arch/arm/configs/rk3506_plc.config
+index a0f171153..3bb6ec4fe 100644
+--- a/arch/arm/configs/rk3506_plc.config
++++ b/arch/arm/configs/rk3506_plc.config
+@@ -69,3 +69,13 @@ CONFIG_PWM_ROCKCHIP_V4=y
+ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+ CONFIG_BACKLIGHT_PWM=y
+ CONFIG_REGULATOR_PWM=y
++# cpufreq via the OPP table and the PWM core supply; thermal throttling; Wi-Fi module power switch
++CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
++CONFIG_CPUFREQ_DT=y
++CONFIG_CPUFREQ_DT_PLATDEV=y
++CONFIG_CPU_THERMAL=y
++CONFIG_RFKILL=y
++CONFIG_RFKILL_GPIO=y

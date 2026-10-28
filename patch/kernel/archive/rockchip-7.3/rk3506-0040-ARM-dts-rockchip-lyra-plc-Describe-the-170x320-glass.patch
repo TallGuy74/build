@@ -1,7 +1,7 @@
 From dd993affe31ea812cb2b73139bc5441e82a28bde Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 22:44:33 +0100
-Subject: [PATCH 40/41] ARM: dts: rockchip: lyra-plc: Describe the 170x320
+Subject: [PATCH 40/46] ARM: dts: rockchip: lyra-plc: Describe the 170x320
  glass of the ST7789V panel
 
 Give fbtft the real panel size and the column offset at which the 1.9"

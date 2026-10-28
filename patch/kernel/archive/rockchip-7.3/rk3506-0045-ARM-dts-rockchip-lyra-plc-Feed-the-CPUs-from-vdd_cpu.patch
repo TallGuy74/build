@@ -1,0 +1,74 @@
+From bd7951aa6fb59fa4fdb737f640ee83e67e674c4e Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 23:50:58 +0100
+Subject: [PATCH 45/46] ARM: dts: rockchip: lyra-plc: Feed the CPUs from
+ vdd_cpu, rfkill for the Wi-Fi module
+
+Point the CPUs at the PWM-controlled vdd_cpu so cpufreq scales the core
+voltage (the vendor kernel runs 850 mV at 1.2 GHz on this regulator with
+the same duty mapping). Replace the GPIO hog on the Wi-Fi/BT module power
+pin with an rfkill-gpio switch: powered at boot, "rfkill block wlan"
+cuts the module.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index a0c5317fd..ff20b0142 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -47,6 +47,19 @@ button-user {
+ 		};
+ 	};
+ 
++	/*
++	 * GPIO1_C5 is the power enable of the AIC8800DC Wi-Fi/BT module (the
++	 * vendor tree calls it BT,power_gpio and lets rfkill raise it; the chip
++	 * only shows up on the USB hub once it is high). The module carries
++	 * both radios, so this one switch cuts Bluetooth too.
++	 */
++	rfkill-wlan {
++		compatible = "rfkill-gpio";
++		label = "aic8800-power";
++		radio-type = "wlan";
++		shutdown-gpios = <&gpio1 RK_PC5 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm0_4ch_2 0 25000 PWM_POLARITY_INVERTED>;
+@@ -113,6 +126,18 @@ vdd_cpu: regulator-vdd-cpu {
+ 	};
+ };
+ 
++&cpu0 {
++	cpu-supply = <&vdd_cpu>;
++};
++
++&cpu1 {
++	cpu-supply = <&vdd_cpu>;
++};
++
++&cpu2 {
++	cpu-supply = <&vdd_cpu>;
++};
++
+ &gmac0 {
+ 	assigned-clocks = <&cru CLK_MAC_OUT>;
+ 	assigned-clock-rates = <25000000>;
+@@ -312,16 +337,3 @@ &wdt0 {
+ 	status = "okay";
+ };
+ 
+-/*
+- * GPIO1_C5 is the power enable of the AIC8800DC Wi-Fi/BT module (the vendor
+- * tree calls it BT,power_gpio and lets rfkill raise it; the chip only shows
+- * up on the USB hub once it is high). Hold it high from boot.
+- */
+-&gpio1 {
+-	wifi-bt-power-hog {
+-		gpio-hog;
+-		gpios = <RK_PC5 GPIO_ACTIVE_HIGH>;
+-		output-high;
+-		line-name = "wifi-bt-power";
+-	};
+-};

@@ -1,0 +1,22 @@
+From 0cc632677a20b866449c8d458d7950bf39abb01c Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 23:50:57 +0100
+Subject: [PATCH 43/46] cpufreq: dt-platdev: Add Rockchip RK3506
+
+The RK3506 CPUs run from the armclk with an OPP table and a PWM-driven
+core supply; let cpufreq-dt bind.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 371ca1fe9..cdbeebbcf 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -76,6 +76,7 @@ static const struct of_device_id allowlist[] __initconst = {
+ 	{ .compatible = "rockchip,rk3328", },
+ 	{ .compatible = "rockchip,rk3366", },
+ 	{ .compatible = "rockchip,rk3368", },
++	{ .compatible = "rockchip,rk3506", },
+ 	{ .compatible = "rockchip,rk3399",
+ 	  .data = &(struct cpufreq_dt_platform_data)
+ 		{ .have_governor_per_policy = true, },

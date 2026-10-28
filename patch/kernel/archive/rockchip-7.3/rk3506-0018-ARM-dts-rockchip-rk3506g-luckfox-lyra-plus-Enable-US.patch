@@ -1,7 +1,7 @@
 From ef7bfea83a10f2a6ef3b2540a97533958977b560 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Thu, 3 Sep 2026 08:06:50 +0200
-Subject: [PATCH 18/41] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Enable
+Subject: [PATCH 18/46] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Enable
  USB peripheral mode
 
 The board exposes OTG0 on its USB-C connector and uses it as a device
