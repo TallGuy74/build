@@ -160,8 +160,7 @@
 		regulator-boot-on;
 		vin-supply = <&vcc_sys>;
 	};
-
-	/* AIC8800DC Wi-Fi/BT combo on USB; only the BT power enable is a GPIO. */
+};
 
 &cpu0 {
 	cpu-supply = <&vdd_cpu>;
