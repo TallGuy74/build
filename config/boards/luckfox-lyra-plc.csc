@@ -20,8 +20,6 @@ PACKAGE_LIST_BOARD="rfkill bluetooth bluez bluez-tools can-utils i2c-tools"
 # ttyS2 ("console=both"). Use a board environment that keeps the console on the FIQ debugger (debug header) and tty1.
 function post_family_config__luckfox-lyra-plc_bootenv() {
 	BOOTENV_FILE='rk3506-luckfox-lyra-plc.txt'
-	# The vendor 6.1 tree keeps the arm32 device trees flat; mainline installs them under dtb/rockchip/.
-	[[ "${BRANCH}" == "edge" ]] && BOOT_FDT_FILE="rockchip/rk3506b-luckfox-lyra-plc.dtb"
 }
 
 # edge = mainline 7.3 with the RK3506 patch series in patch/kernel/archive/rockchip-7.3 (rk3506-*.patch): the
