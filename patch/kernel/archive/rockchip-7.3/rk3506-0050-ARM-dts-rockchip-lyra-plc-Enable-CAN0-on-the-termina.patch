@@ -1,0 +1,46 @@
+From 1a06c51a0e30a5fa868674b8a70e3a61eaa8d5d2 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 00:02:48 +0100
+Subject: [PATCH 50/50] ARM: dts: rockchip: lyra-plc: Enable CAN0 on the
+ terminal block
+
+CAN0 on RM_IO12/RM_IO13 with the 200 MHz bit-rate clock the stock tree
+uses; CAN as modules in the config fragment.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index ff20b0142..832dae6fc 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -126,6 +126,15 @@ vdd_cpu: regulator-vdd-cpu {
+ 	};
+ };
+ 
++/* CAN0 on RM_IO12/13; 120 ohm termination by switch on the terminal block. */
++&can0 {
++	assigned-clocks = <&cru CLK_CAN0>;
++	assigned-clock-rates = <200000000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&rm_io12_can0_tx>, <&rm_io13_can0_rx>;
++	status = "okay";
++};
++
+ &cpu0 {
+ 	cpu-supply = <&vdd_cpu>;
+ };
+diff --git a/arch/arm/configs/rk3506_plc.config b/arch/arm/configs/rk3506_plc.config
+index 3bb6ec4fe..42894cde2 100644
+--- a/arch/arm/configs/rk3506_plc.config
++++ b/arch/arm/configs/rk3506_plc.config
+@@ -79,3 +79,10 @@ CONFIG_CPUFREQ_DT_PLATDEV=y
+ CONFIG_CPU_THERMAL=y
+ CONFIG_RFKILL=y
+ CONFIG_RFKILL_GPIO=y
++# CAN0 (field bus) on the RK3576-type controller
++CONFIG_CAN=m
++CONFIG_CAN_RAW=m
++CONFIG_CAN_BCM=m
++CONFIG_CAN_DEV=m
++CONFIG_CAN_CALC_BITTIMING=y
++CONFIG_CAN_ROCKCHIP_RK3576=m

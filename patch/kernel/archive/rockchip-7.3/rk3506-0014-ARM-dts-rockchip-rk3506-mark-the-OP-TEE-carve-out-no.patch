@@ -1,7 +1,7 @@
 From ecd05da2614b5f8f12919c8a3b6d44e7ea4b4ebe Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 2 Sep 2026 20:09:27 +0200
-Subject: [PATCH 14/46] ARM: dts: rockchip: rk3506: mark the OP-TEE carve-out
+Subject: [PATCH 14/50] ARM: dts: rockchip: rk3506: mark the OP-TEE carve-out
  no-map
 
 The node carried a TODO(verify) saying that no-map is the idiomatic form

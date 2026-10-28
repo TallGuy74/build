@@ -1,7 +1,7 @@
 From e0c3bc5a4486c20eac88d307a56cf9cfd4fbc18b Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 2 Sep 2026 22:03:49 +0200
-Subject: [PATCH 16/46] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Add the
+Subject: [PATCH 16/50] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Add the
  SPI NAND
 
 Enable the serial flash controller and describe the 256 MiB SPI NAND the
