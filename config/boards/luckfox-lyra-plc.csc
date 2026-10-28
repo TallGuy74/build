@@ -24,6 +24,8 @@ function post_family_config__luckfox-lyra-plc_bootenv() {
 	# keep the clock framework from gating clocks nobody claimed at boot.
 	if [[ "${BRANCH}" == "edge" ]]; then
 		BOOTENV_FILE='rk3506-luckfox-lyra-plc-edge.txt'
+		# mainline has no FIQ debugger: UART0 (debug header) is ttyS0 at 1.5 Mbaud
+		SERIALCON='ttyS0'
 	fi
 	return 0
 }
