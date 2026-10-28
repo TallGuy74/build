@@ -1,0 +1,59 @@
+From 89bbcb0bd131e0a9f61be866d83f10736fd70bf6 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 22:19:38 +0100
+Subject: [PATCH 38/38] ARM: dts: rockchip: lyra-plc: Clock the Ethernet PHYs
+ and power the Wi-Fi module
+
+First boot on the hardware: both GMACs probe but never get a link, and
+the AIC8800DC never shows up behind the USB hub.
+
+The RMII PHYs run from the SoC's 25 MHz CLK_MAC_OUT. dwmac-rk takes that
+clock from the PHY node (of_clk_get(phy_node, 0)); without the clocks
+property nobody holds it and clk_disable_unused gates it late in boot,
+leaving the PHYs without a reference clock. Add it to both PHY nodes, as
+the vendor tree does.
+
+GPIO1_C5 is the power enable of the Wi-Fi/BT module (the vendor tree's
+BT,power_gpio, raised by its rfkill driver; the USB device appears right
+after). Hold it high from boot with a GPIO hog.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index e81bd467a..58da1d23e 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -127,6 +127,7 @@ &mdio0 {
+ 	rmii_phy0: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <1>;
++		clocks = <&cru CLK_MAC_OUT>;
+ 		reset-gpios = <&gpio1 RK_PC0 GPIO_ACTIVE_LOW>;
+ 		reset-assert-us = <20000>;
+ 		reset-deassert-us = <100000>;
+@@ -147,6 +148,7 @@ &mdio1 {
+ 	rmii_phy1: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <1>;
++		clocks = <&cru CLK_MAC_OUT>;
+ 		reset-gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
+ 		reset-assert-us = <20000>;
+ 		reset-deassert-us = <100000>;
+@@ -301,3 +303,17 @@ &usb_otg1 {
+ &wdt0 {
+ 	status = "okay";
+ };
++
++/*
++ * GPIO1_C5 is the power enable of the AIC8800DC Wi-Fi/BT module (the vendor
++ * tree calls it BT,power_gpio and lets rfkill raise it; the chip only shows
++ * up on the USB hub once it is high). Hold it high from boot.
++ */
++&gpio1 {
++	wifi-bt-power-hog {
++		gpio-hog;
++		gpios = <RK_PC5 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "wifi-bt-power";
++	};
++};

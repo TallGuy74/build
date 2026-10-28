@@ -1,7 +1,7 @@
 From 1a3f572bcc478248e6ff6582285e9dd7a96359db Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:24:21 +0100
-Subject: [PATCH 33/37] ARM: dts: rockchip: rk3506: Add the PWM controllers
+Subject: [PATCH 33/38] ARM: dts: rockchip: rk3506: Add the PWM controllers
 
 pwm0 (four channels at 0xff930000, PMU domain) and pwm1 (eight channels
 at 0xff170000), one node per channel as the PWMv4 binding wants, all
