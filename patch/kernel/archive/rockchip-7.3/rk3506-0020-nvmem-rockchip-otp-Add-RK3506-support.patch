@@ -1,0 +1,43 @@
+From 4c81ba6ce81cc706f66db323092cef20eddd233d Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 16:49:55 +0100
+Subject: [PATCH 20/25] nvmem: rockchip-otp: Add RK3506 support
+
+The RK3506 OTP is 0x78 bytes, uses the rk3528 clock set (otp, apb_pclk,
+sbpi) and the rk3568 read path.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+---
+ drivers/nvmem/rockchip-otp.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/nvmem/rockchip-otp.c b/drivers/nvmem/rockchip-otp.c
+index 2c0feb036..3c2556b7f 100644
+--- a/drivers/nvmem/rockchip-otp.c
++++ b/drivers/nvmem/rockchip-otp.c
+@@ -337,6 +337,14 @@ static const char * const rk3528_otp_clocks[] = {
+ 	"otp", "apb_pclk", "sbpi",
+ };
+ 
++static const struct rockchip_data rk3506_data = {
++	.size = 0x78,
++	.word_size = sizeof(u16),
++	.clks = rk3528_otp_clocks,
++	.num_clks = ARRAY_SIZE(rk3528_otp_clocks),
++	.reg_read = rk3568_otp_read,
++};
++
+ static const struct rockchip_data rk3528_data = {
+ 	.size = 0x80,
+ 	.word_size = sizeof(u16),
+@@ -388,6 +396,10 @@ static const struct of_device_id rockchip_otp_match[] = {
+ 		.compatible = "rockchip,rk3308-otp",
+ 		.data = &px30_data,
+ 	},
++	{
++		.compatible = "rockchip,rk3506-otp",
++		.data = &rk3506_data,
++	},
+ 	{
+ 		.compatible = "rockchip,rk3528-otp",
+ 		.data = &rk3528_data,

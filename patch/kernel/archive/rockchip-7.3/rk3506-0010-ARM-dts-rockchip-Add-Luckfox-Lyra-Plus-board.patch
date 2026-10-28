@@ -1,0 +1,71 @@
+From 0b9d0c307d8f15db394c3d515dd4f7eca13abf93 Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Wed, 26 Aug 2026 11:17:18 +0200
+Subject: [PATCH 10/25] ARM: dts: rockchip: Add Luckfox Lyra Plus board
+
+The Luckfox Lyra Plus is an RK3506G2 board with 128 MiB of DDR3L.
+
+Describe only the console: uart0 on its default pin group, at the
+1500000 baud the vendor firmware uses, and the memory node. The
+TPL/SPL rewrites memory@0 with the size it actually trained, so the
+size here only matters when the dtb is booted standalone.
+
+Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
+
+(cherry picked from commit f3d73cf8c33f26378507f5c2859c750e49e28558)
+---
+ arch/arm/boot/dts/rockchip/Makefile           |  3 +-
+ .../rockchip/rk3506g-luckfox-lyra-plus.dts    | 33 +++++++++++++++++++
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+
+diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
+index e9f9e0ac3..88b01f3d0 100644
+--- a/arch/arm/boot/dts/rockchip/Makefile
++++ b/arch/arm/boot/dts/rockchip/Makefile
+@@ -45,4 +45,5 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rk3288-veyron-pinky.dtb \
+ 	rk3288-veyron-speedy.dtb \
+ 	rk3288-veyron-tiger.dtb \
+-	rk3288-vyasa.dtb
++	rk3288-vyasa.dtb \
++	rk3506g-luckfox-lyra-plus.dtb
+diff --git a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+new file mode 100644
+index 000000000..45091c109
+--- /dev/null
++++ b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2023 Rockchip Electronics Co., Ltd.
++ */
++
++/dts-v1/;
++
++#include "rk3506.dtsi"
++
++/ {
++	model = "Luckfox Lyra Plus";
++	compatible = "luckfox,lyra-plus", "rockchip,rk3506";
++
++	chosen {
++		stdout-path = "serial0:1500000n8";
++	};
++
++	/*
++	 * The Lyra Plus carries 128 MiB of DDR3L. The TPL/SPL rewrites this
++	 * node with the size it actually trained, so the value here only
++	 * matters when booting the DTB standalone.
++	 */
++	memory@0 {
++		device_type = "memory";
++		reg = <0x00000000 0x08000000>;
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer_pins>;
++	status = "okay";
++};

@@ -1,0 +1,94 @@
+From 9062de65e55c4262e110ee69d5772e1f7a6408ae Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 16:51:07 +0100
+Subject: [PATCH 25/25] dt-bindings: Add RK3506 compatibles for TSADC, OTP and
+ USB2 PHY, and the Luckfox Lyra PLC board
+
+rockchip,rk3506-tsadc, rockchip,rk3506-otp (same clock set as rk3528) and
+rockchip,rk3506-usb2phy (two ports; needs rockchip,usbgrf and two clocks
+like rk3528), plus the luckfox,lyra-plc board compatible.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml          | 5 +++++
+ Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml    | 2 ++
+ .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml       | 3 +++
+ .../devicetree/bindings/thermal/rockchip-thermal.yaml        | 1 +
+ 4 files changed, 11 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index a799bb843..9fcc398ea 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -837,6 +837,11 @@ properties:
+           - const: luckfox,core3576
+           - const: rockchip,rk3576
+ 
++      - description: Luckfox Lyra PLC
++        items:
++          - const: luckfox,lyra-plc
++          - const: rockchip,rk3506
++
+       - description: Lunzn FastRhino R66S / R68S
+         items:
+           - enum:
+diff --git a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+index 7e4d5e1c4..52f2290a8 100644
+--- a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
++++ b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+@@ -14,6 +14,7 @@ properties:
+     enum:
+       - rockchip,px30-otp
+       - rockchip,rk3308-otp
++      - rockchip,rk3506-otp
+       - rockchip,rk3528-otp
+       - rockchip,rk3562-otp
+       - rockchip,rk3568-otp
+@@ -78,6 +79,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - rockchip,rk3506-otp
+               - rockchip,rk3528-otp
+     then:
+       properties:
+diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+index f50fc69fb..873f444fa 100644
+--- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
++++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+@@ -20,6 +20,7 @@ properties:
+       - rockchip,rk3328-usb2phy
+       - rockchip,rk3366-usb2phy
+       - rockchip,rk3399-usb2phy
++      - rockchip,rk3506-usb2phy
+       - rockchip,rk3528-usb2phy
+       - rockchip,rk3562-usb2phy
+       - rockchip,rk3568-usb2phy
+@@ -158,6 +159,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - rockchip,rk3506-usb2phy
+               - rockchip,rk3528-usb2phy
+               - rockchip,rk3568-usb2phy
+               - rockchip,rv1108-usb2phy
+@@ -232,6 +234,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - rockchip,rk3506-usb2phy
+               - rockchip,rk3528-usb2phy
+     then:
+       properties:
+diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+index 9fa5c4c49..76a69a119 100644
+--- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+@@ -20,6 +20,7 @@ properties:
+       - rockchip,rk3328-tsadc
+       - rockchip,rk3368-tsadc
+       - rockchip,rk3399-tsadc
++      - rockchip,rk3506-tsadc
+       - rockchip,rk3568-tsadc
+       - rockchip,rk3576-tsadc
+       - rockchip,rk3588-tsadc

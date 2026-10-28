@@ -1,0 +1,36 @@
+From ef7bfea83a10f2a6ef3b2540a97533958977b560 Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Thu, 3 Sep 2026 08:06:50 +0200
+Subject: [PATCH 18/25] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Enable
+ USB peripheral mode
+
+The board exposes OTG0 on its USB-C connector and uses it as a device
+port, which is how the vendor firmware offers adb over USB.
+
+dr_mode = "peripheral" and nothing else, matching the vendor board dts:
+no vbus-supply and no pinctrl, because the USB data pins are dedicated
+rather than muxed.
+
+(cherry picked from commit d5ef611ad074dcbd1fb76fed48ca13046a93b72a)
+---
+ .../boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts    | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+index 38324c48d..9047e5fbd 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+@@ -80,3 +80,13 @@ &uart0 {
+ 	pinctrl-0 = <&uart0_xfer_pins>;
+ 	status = "okay";
+ };
++
++/*
++ * The USB-C port. "peripheral" and nothing else, exactly as the vendor board
++ * dts (rk3506g-luckfox-lyra-plus.dts:64-67): no vbus-supply, no pinctrl - the
++ * USB data pins are dedicated, not muxed.
++ */
++&usb_otg0 {
++	dr_mode = "peripheral";
++	status = "okay";
++};

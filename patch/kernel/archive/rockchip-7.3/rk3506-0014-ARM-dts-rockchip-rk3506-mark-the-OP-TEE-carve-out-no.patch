@@ -1,0 +1,78 @@
+From ecd05da2614b5f8f12919c8a3b6d44e7ea4b4ebe Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Wed, 2 Sep 2026 20:09:27 +0200
+Subject: [PATCH 14/25] ARM: dts: rockchip: rk3506: mark the OP-TEE carve-out
+ no-map
+
+The node carried a TODO(verify) saying that no-map is the idiomatic form
+for a secure-world carve-out but was untested on this SoC, so the vendor
+form was kept.
+
+It is now tested, and the answer is stronger than expected: the range is
+not just reserved, it is unreachable from normal world. A bare read from
+the U-Boot prompt, which runs in normal world, aborts:
+
+    => md 0x4000 4
+    00004000:data abort
+    pc : 00254086  lr : 00254029
+    ### ERROR ### Please RESET the board ###
+
+Without no-map the range stays in the kernel linear map, so the kernel
+holds mappings for memory that faults on access. Add no-map and close the
+TODO.
+
+While here, record on ramoops@83000 why its address is not a problem even
+though it sits below the 2 MiB floor that linux,usable-memory-range
+establishes in the board dts: capping memblock removes the range from the
+allocator, not from reserved-memory. Verified on the board - pstore comes
+up and uses that region.
+
+Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
+(cherry picked from commit 0f255fc56c22a134ea6592a7905656ae5387dfa7)
+---
+ arch/arm/boot/dts/rockchip/rk3506.dtsi | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+index 253a9c66c..44d1286d6 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+@@ -77,13 +77,21 @@ reserved-memory {
+ 		 * from here, so handing this range to the page allocator kills
+ 		 * SMP bring-up and PSCI system-off.
+ 		 *
+-		 * TODO(verify): the vendor node (rk3502.dtsi:335) has no
+-		 * "no-map", so this range stays in the kernel linear map.
+-		 * "no-map" is the idiomatic mainline form for a secure-world
+-		 * carve-out but is untested on this SoC; kept as vendor.
++		 * no-map because the range is not merely reserved, it is
++		 * unreachable: the memory firewall rejects normal-world
++		 * access, and even a read aborts. Measured from the U-Boot
++		 * prompt, which also runs in normal world:
++		 *
++		 *     => md 0x4000 4
++		 *     00004000:data abort
++		 *
++		 * The vendor node (rk3502.dtsi:335) omits no-map and so leaves
++		 * the range in the kernel linear map, i.e. mappings that must
++		 * never be touched.
+ 		 */
+ 		trust@0 {
+ 			reg = <0x0 0x62000>;
++			no-map;
+ 		};
+ 
+ 		/*
+@@ -91,6 +99,12 @@ trust@0 {
+ 		 * console was up. Vendor also sets boot-log-size and
+ 		 * boot-log-count (rk3502.dtsi:352) - those are Rockchip
+ 		 * extensions with no mainline binding, dropped here.
++		 *
++		 * The address is below the 2 MiB floor that
++		 * linux,usable-memory-range establishes in the board dts, and
++		 * that is fine: capping memblock removes the range from the
++		 * allocator, not from reserved-memory. Verified on the board,
++		 * pstore comes up and uses this region.
+ 		 */
+ 		ramoops@83000 {
+ 			compatible = "ramoops";

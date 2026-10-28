@@ -1,0 +1,79 @@
+From 41f832439aa0c1c8cc42c655b3f040573c0d46cd Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Wed, 2 Sep 2026 22:03:49 +0200
+Subject: [PATCH 15/25] ARM: dts: rockchip: rk3506: Add the serial flash
+ controller
+
+The RK3506 boots from SPI NAND, so describing the controller is what stands
+between this dtsi and a root filesystem on flash.
+
+The vendor calls the block FSPI and gives it its own compatible,
+"rockchip,rk3506-fspi", "rockchip,fspi" (rk3502.dtsi:942). Mainline has no
+driver and no binding for either string. It does have
+drivers/spi/spi-rockchip-sfc.c, whose binding says:
+
+    The rockchip sfc controller is a standalone IP with version register,
+    and the driver can handle all the feature difference inside the IP
+    depending on the version register.
+
+and whose probe reads SFC_VER at runtime, handling versions 3, 4, 5 and 8
+(spi-rockchip-sfc.c:111-115, 211-213). Two things say FSPI is the same IP
+lineage under a new name: the vendor node keeps the *SFC* clock names,
+
+    clock-names = "clk_sfc", "hclk_sfc";        /* rk3502.dtsi:947 */
+
+which is exactly what the mainline binding requires, and the clocks are
+already described here as SCLK_FSPI and HCLK_FSPI (167 and 168 in
+rockchip,rk3506-cru.h, implemented in clk-rk3506.c:582,584).
+
+So describe it as "rockchip,sfc" and let the driver identify the IP. If the
+register interface turns out to differ, the flash will simply not probe and
+an FSPI driver will be needed; nothing else depends on this node.
+
+The vendor node also carries rockchip,grf and rockchip,max-dll. The mainline
+binding declares neither and sets unevaluatedProperties: false, so they are
+left out.
+
+Disabled here, enabled per board: the pin group and the flash chip are board
+properties.
+
+Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
+(cherry picked from commit 39b190edce71fa4a4de1fa5ded39985f42917795)
+---
+ arch/arm/boot/dts/rockchip/rk3506.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+index 44d1286d6..4b923b5a8 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+@@ -176,6 +176,29 @@ grf: syscon@ff288000 {
+ 		reg = <0xff288000 0x4000>;
+ 	};
+ 
++	/*
++	 * Serial flash controller. The vendor calls this block FSPI and gives
++	 * it its own compatible ("rockchip,rk3506-fspi", "rockchip,fspi",
++	 * rk3502.dtsi:942), but it keeps the SFC clock names, and the mainline
++	 * binding states that the SFC is "a standalone IP with version
++	 * register, and the driver can handle all the feature difference
++	 * inside the IP depending on the version register". So describe it as
++	 * rockchip,sfc and let spi-rockchip-sfc.c read SFC_VER.
++	 *
++	 * The vendor node also carries rockchip,grf and rockchip,max-dll,
++	 * which the mainline binding does not define; left out.
++	 */
++	sfc: spi@ff488000 {
++		compatible = "rockchip,sfc";
++		reg = <0xff488000 0x4000>;
++		interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_FSPI>, <&cru HCLK_FSPI>;
++		clock-names = "clk_sfc", "hclk_sfc";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
+ 	/* pinctrl "rockchip,grf": iomux registers for the non-PMU banks */
+ 	ioc_grf: syscon@ff4d8000 {
+ 		compatible = "rockchip,rk3506-ioc-grf", "syscon";

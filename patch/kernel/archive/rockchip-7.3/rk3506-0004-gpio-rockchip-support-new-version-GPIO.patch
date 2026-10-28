@@ -1,0 +1,35 @@
+From 3581dc833016c48750b9edccd7995686d582b366 Mon Sep 17 00:00:00 2001
+From: Ye Zhang <ye.zhang@rock-chips.com>
+Date: Sat, 27 Dec 2025 19:49:54 +0800
+Subject: [PATCH 04/25] gpio: rockchip: support new version GPIO
+
+Support the next version GPIO controller on SoCs like rv1126b.
+
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+
+(cherry picked from commit 52cf753e6fd99d7484fcfcb0be34c910dd0c61e8)
+---
+ drivers/gpio/gpio-rockchip.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 77b239a9a..9ba3516fa 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -35,6 +35,7 @@
+ #define GPIO_TYPE_V2		(0x01000C2B)
+ #define GPIO_TYPE_V2_1		(0x0101157C)
+ #define GPIO_TYPE_V2_2		(0x010219C8)
++#define GPIO_TYPE_V2_6          (0x01063F6E)
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
+@@ -669,6 +670,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 	case GPIO_TYPE_V2:
+ 	case GPIO_TYPE_V2_1:
+ 	case GPIO_TYPE_V2_2:
++	case GPIO_TYPE_V2_6:
+ 		bank->gpio_regs = &gpio_regs_v2;
+ 		bank->gpio_type = GPIO_TYPE_V2;
+ 		bank->db_clk = of_clk_get(bank->of_node, 1);

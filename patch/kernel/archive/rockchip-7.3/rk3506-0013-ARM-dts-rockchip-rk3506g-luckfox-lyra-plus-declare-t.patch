@@ -1,0 +1,123 @@
+From a927f3d134ac51bd552e373d78220ac9df1ac3c4 Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Wed, 2 Sep 2026 20:09:27 +0200
+Subject: [PATCH 13/25] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: declare
+ the memory Linux may use
+
+The board does not boot. It stops after "Starting kernel ..." without
+printing a single character - not with earlycon, not with
+CONFIG_DEBUG_LL.
+
+The cause is neither the kernel nor the dtb, it is where the
+decompressor works. AUTO_ZRELADDR, mandatory on ARCH_MULTIPLATFORM,
+derives the start of physical memory by masking the program counter:
+
+    head.S:279-280   mov r0, pc; and r0, r0, #0xf8000000   -> 0x00000000
+    head.S:312       add r4, r0, #TEXT_OFFSET              -> 0x00008000
+
+and fdt_check_mem_start() does not correct it, because memory@0 declares
+DRAM from 0 and so 0 is a valid address (fdt_check_mem_start.c:146-148,
+"Calculated address is valid, use it"). From there:
+
+    head.S:793   __setup_mmu: sub r3, r4, #16384
+
+puts the identity page directory at 0x00004000 and writes 16 KiB up to
+0x8000. That range is inside trust@0 (0x0-0x62000), the OP-TEE carve-out,
+which the RK3506 memory firewall makes inaccessible from normal world.
+Measured from the U-Boot prompt, which also runs in normal world:
+
+    => md 0x4000 4
+    00004000:data abort
+    pc : 00254086  lr : 00254029
+    ### ERROR ### Please RESET the board ###
+
+Not even a read gets through. The decompressor therefore aborts on the
+first page directory write, inside cache_on and before
+decompress_kernel(), so its first putstr() is never reached - which is
+why enabling DEBUG_LL changed nothing. The silence was the expected
+signature, not a lack of information.
+
+That the decompressed kernel belongs above the reserved region is in the
+bootloader's own map, u-boot/include/configs/rk3506_common.h:
+
+     *     fdt:  396K - 524K
+     *   Image:  1M+32k - 16M
+     *  zImage:  16M - 24M
+
+with kernel_addr_r=0x00108000. The constraint was there; the kernel had
+no way to know it.
+
+linux,usable-memory-range expresses it. fdt_check_mem_start() then
+returns round_up(base, SZ_2M) instead of the masked program counter,
+moving the page directory to 0x00204000 and the kernel to 0x00208000,
+clear of OP-TEE (ends 0x62000), the dtb (0x63000) and ramoops (0x83000);
+and early_init_dt_check_for_usable_mem_range() (of/fdt.c:884-916) caps
+memblock, so the firewalled range leaves the kernel's view entirely and
+nothing in the linear map can reach it.
+
+This is the same pattern as arch/arm/boot/dts/airoha/en7523-evb.dts,
+which declares the identical 2 MiB offset because its bootloader installs
+ATF at the bottom of DRAM.
+
+Capping memblock does not disturb the reserved-memory regions that fall
+below the cap: it removes the range from the allocator, not from
+reserved-memory. ramoops@83000 is below the floor and still works:
+
+    OF: fdt: Ignoring memory range 0x0 - 0x200000
+    OF: reserved mem: 0x00083000..0x000affff (180 KiB) map non-reusable ramoops@83000
+    pstore: Registered ramoops as persistent store backend
+    ramoops: using 0x2d000@0x83000, ecc: 0
+
+With this the board reaches a prompt, on all three cores:
+
+    smp: Brought up 1 node, 3 CPUs
+    SMP: Total of 3 processors activated (144.00 BogoMIPS).
+    # uname -a
+    Linux lyra-plus 6.19.0 #2 SMP armv7l GNU/Linux
+
+SMP is the part that matters: PSCI is method = "smc", served by OP-TEE.
+Had the kernel still written over that range, the secondary cores would
+not come up.
+
+Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
+(cherry picked from commit dcf7540d7cbdd45b8614279f0d1e862485d96778)
+---
+ .../rockchip/rk3506g-luckfox-lyra-plus.dts    | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+index 45091c109..8958edb0c 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+@@ -13,6 +13,31 @@ / {
+ 
+ 	chosen {
+ 		stdout-path = "serial0:1500000n8";
++
++		/*
++		 * The bottom 2 MiB of DRAM is not available to Linux: OP-TEE
++		 * owns 0x0-0x62000 (trust@0 in rk3506.dtsi) and the memory
++		 * firewall makes it inaccessible from normal world, while the
++		 * bootloader places the kernel dtb at 0x63000 and ramoops at
++		 * 0x83000.
++		 *
++		 * memory@0 below still has to describe all of DRAM, because
++		 * that is what the TPL/SPL writes there. Without this property
++		 * AUTO_ZRELADDR derives the start of physical memory by
++		 * masking the program counter, gets 0x0, and
++		 * fdt_check_mem_start() accepts it because memory@0 starts at
++		 * 0. The decompressor then places its 16 KiB identity page
++		 * directory at zreladdr - 16384 = 0x4000 and the kernel at
++		 * 0x8000, both inside the firewalled range. Every write
++		 * aborts, in cache_on and before decompress_kernel(), so the
++		 * board dies without printing a single character - not even
++		 * with earlycon or CONFIG_DEBUG_LL.
++		 *
++		 * Same pattern, and the same 2 MiB offset, as
++		 * arch/arm/boot/dts/airoha/en7523-evb.dts, where the
++		 * bootloader installs ATF at the bottom of DRAM.
++		 */
++		linux,usable-memory-range = <0x00200000 0x07e00000>;
+ 	};
+ 
+ 	/*

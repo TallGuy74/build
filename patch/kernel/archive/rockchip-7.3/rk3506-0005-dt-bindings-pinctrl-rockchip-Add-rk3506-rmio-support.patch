@@ -1,0 +1,63 @@
+From 2fcd138b565fb920b533e819681a038d7babdc7e Mon Sep 17 00:00:00 2001
+From: Ye Zhang <ye.zhang@rock-chips.com>
+Date: Sat, 27 Dec 2025 19:49:55 +0800
+Subject: [PATCH 05/25] dt-bindings: pinctrl: rockchip: Add rk3506 rmio support
+
+The RK3506 SoC introduces a secondary block-level pinmux controller called
+RMIO (Rockchip Matrix I/O). When the primary IOMUX is selected to a
+specific function, the pin signal is routed to the RMIO block, where a
+secondary selection determines the final function.
+
+This patch adds the necessary properties to support RMIO:
+- rockchip,rmio: phandle to the RMIO syscon node.
+- rockchip,rmio-pins: a matrix to configure the RMIO block.
+
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+
+(cherry picked from commit 35b97aa8be48cac6b5d6211660421f773d03faf5)
+---
+ .../bindings/pinctrl/rockchip,pinctrl.yaml    | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index 22776a5c3..4194a04e9 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -69,6 +69,13 @@ properties:
+       Required for at least rk3188 and rk3288. On the rk3368 this should
+       point to the PMUGRF syscon.
+ 
++  rockchip,rmio:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for the RMIO registers, used by
++      some SoCs (e.g. rk3506) to configure the secondary block-level
++      pinmux functions.
++
+   "#address-cells":
+     enum: [1, 2]
+ 
+@@ -147,6 +154,23 @@ additionalProperties:
+                 The phandle of a node contains the generic pinconfig options
+                 to use as described in pinctrl-bindings.txt.
+ 
++      rockchip,rmio-pins:
++        $ref: /schemas/types.yaml#/definitions/uint32-matrix
++        minItems: 1
++        items:
++          items:
++            - minimum: 0
++              description: RMIO ID (Controller index)
++            - minimum: 0
++              description: Pin index within the RMIO controller
++            - minimum: 0
++              description: Function Mux ID
++        description:
++          Configuration for the Rockchip Matrix I/O (RMIO) block. The format
++          is <rmio_id pin_id function_id>. This acts as a secondary muxing
++          layer when the primary 'rockchip,pins' mux is set to the RMIO
++          function.
++
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>

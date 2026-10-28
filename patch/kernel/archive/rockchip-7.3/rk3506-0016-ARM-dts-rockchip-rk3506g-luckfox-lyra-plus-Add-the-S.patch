@@ -1,0 +1,64 @@
+From e0c3bc5a4486c20eac88d307a56cf9cfd4fbc18b Mon Sep 17 00:00:00 2001
+From: Walter Dal Mut <walter.dalmut@corley.it>
+Date: Wed, 2 Sep 2026 22:03:49 +0200
+Subject: [PATCH 16/25] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Add the
+ SPI NAND
+
+Enable the serial flash controller and describe the 256 MiB SPI NAND the
+board boots from. U-Boot reads it as "SPI Nand ID ef aa 22" and takes the
+TPL/SPL, U-Boot itself and the kernel FIT from it.
+
+Frequency and bus widths follow the vendor board dts
+(rk3506-luckfox-lyra.dtsi:1245-1254): 80 MHz, quad read, single write.
+
+The three fspi pin groups are named explicitly. The vendor node carries no
+pinctrl at all, which works only as long as the bootloader leaves the pins
+muxed; the mainline binding example names its groups, and depending on
+leftover bootloader state is not a property this dts should rely on. The
+groups are already described in rk3506-pinctrl.dtsi and are marked
+/omit-if-no-ref/, so before this commit they were compiled out.
+
+This does not yet give a root filesystem on flash - that needs MTD, UBI and
+UBIFS in the kernel config - but it is the piece that has to exist first.
+
+Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
+(cherry picked from commit 51ec1998291b29f5da0925f05939191eb9bab485)
+---
+ .../rockchip/rk3506g-luckfox-lyra-plus.dts    | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+index 8958edb0c..38324c48d 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+@@ -51,6 +51,30 @@ memory@0 {
+ 	};
+ };
+ 
++&sfc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&fspi_clk_pins &fspi_csn_pins &fspi_bus4_pins>;
++	status = "okay";
++
++	/*
++	 * 256 MiB SPI NAND, the boot medium: the BootROM and the TPL/SPL come
++	 * from here, and U-Boot reports "SPI Nand ID ef aa 22".
++	 *
++	 * Frequency and bus widths as the vendor board dts
++	 * (rk3506-luckfox-lyra.dtsi:1245-1254). The vendor node carries no
++	 * pinctrl; the three groups are named here because the binding example
++	 * does so and because relying on the bootloader having left the pins
++	 * muxed is not something to depend on.
++	 */
++	flash@0 {
++		compatible = "spi-nand";
++		reg = <0>;
++		spi-max-frequency = <80000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <1>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_xfer_pins>;

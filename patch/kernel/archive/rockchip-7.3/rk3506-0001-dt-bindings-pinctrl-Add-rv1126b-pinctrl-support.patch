@@ -1,0 +1,28 @@
+From fb0eea48fd17c3809a315da2b4b42f6bcafa002a Mon Sep 17 00:00:00 2001
+From: Ye Zhang <ye.zhang@rock-chips.com>
+Date: Sat, 27 Dec 2025 19:49:51 +0800
+Subject: [PATCH 01/25] dt-bindings: pinctrl: Add rv1126b pinctrl support
+
+The RV1126B is a new SoC that is the successor of the RV1126. It has
+different pinctrl registers and is not compatible with the RV1126.
+Therefore, add a new compatible string for it.
+
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+
+(cherry picked from commit eaa580def7912f3d72fe12752e6d07d45cd54329)
+---
+ Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index 81747bb53..22776a5c3 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -54,6 +54,7 @@ properties:
+       - rockchip,rv1106-pinctrl
+       - rockchip,rv1108-pinctrl
+       - rockchip,rv1126-pinctrl
++      - rockchip,rv1126b-pinctrl
+ 
+   rockchip,grf:
+     $ref: /schemas/types.yaml#/definitions/phandle
