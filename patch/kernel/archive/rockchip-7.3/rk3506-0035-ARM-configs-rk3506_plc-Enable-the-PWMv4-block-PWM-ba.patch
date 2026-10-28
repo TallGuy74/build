@@ -1,0 +1,23 @@
+From f0f99a87b987f211169d24203030e4a6f7f2d31f Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 17:24:21 +0100
+Subject: [PATCH 35/36] ARM: configs: rk3506_plc: Enable the PWMv4 block, PWM
+ backlight and regulator
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/configs/rk3506_plc.config b/arch/arm/configs/rk3506_plc.config
+index 6a6a8a347..a0f171153 100644
+--- a/arch/arm/configs/rk3506_plc.config
++++ b/arch/arm/configs/rk3506_plc.config
+@@ -62,3 +62,10 @@ CONFIG_WATCHDOG=y
+ CONFIG_DW_WATCHDOG=y
+ CONFIG_NVMEM=y
+ CONFIG_NVMEM_ROCKCHIP_OTP=y
++# PWMv4 block (backlight on pwm0 ch2, core voltage on pwm0 ch0)
++CONFIG_MFD_ROCKCHIP_MFPWM=y
++CONFIG_PWM=y
++CONFIG_PWM_ROCKCHIP_V4=y
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++CONFIG_BACKLIGHT_PWM=y
++CONFIG_REGULATOR_PWM=y

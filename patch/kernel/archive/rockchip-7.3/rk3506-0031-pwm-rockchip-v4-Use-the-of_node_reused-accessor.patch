@@ -1,0 +1,24 @@
+From 139642d1db24b8e115e4ae4ae174cdaaa816896b Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 17:25:14 +0100
+Subject: [PATCH 31/36] pwm: rockchip-v4: Use the of_node_reused accessor
+
+Since 7.1 the flag lives in a device flag word behind
+dev_set_of_node_reused(); the posted v5 driver still assigns the
+removed struct member and does not build on 7.3.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/pwm/pwm-rockchip-v4.c b/drivers/pwm/pwm-rockchip-v4.c
+index b7de72c43..bece37c9a 100644
+--- a/drivers/pwm/pwm-rockchip-v4.c
++++ b/drivers/pwm/pwm-rockchip-v4.c
+@@ -306,7 +306,7 @@ static int rockchip_pwm_v4_probe(struct platform_device *pdev)
+ 	 * For referencing the PWM in the DT to work, we need the parent MFD
+ 	 * device's OF node.
+ 	 */
+-	dev->of_node_reused = true;
++	dev_set_of_node_reused(dev);
+ 	device_set_node(dev, of_fwnode_handle(dev->parent->of_node));
+ 
+ 	chip = devm_pwmchip_alloc(dev, 1, sizeof(*pc));

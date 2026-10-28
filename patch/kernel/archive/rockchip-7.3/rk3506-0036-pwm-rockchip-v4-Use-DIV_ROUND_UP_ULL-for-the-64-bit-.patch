@@ -1,0 +1,33 @@
+From 4f6ddfbe59bffb08791f8eb9193602a4d838df57 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Wed, 28 Oct 2026 20:35:31 +0100
+Subject: [PATCH 36/36] pwm: rockchip-v4: Use DIV_ROUND_UP_ULL for the 64-bit
+ rounding
+
+The posted driver only ever built on arm64, where a plain 64-bit
+division is fine. On arm32 (RK3506) DIV_ROUND_UP() on a u64 numerator
+emits a call to __aeabi_uldivmod, which the kernel does not provide:
+
+  pwm-rockchip-v4.o: undefined reference to `__aeabi_uldivmod'
+
+Use DIV_ROUND_UP_ULL(), which goes through div_u64() and works on both.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/pwm/pwm-rockchip-v4.c b/drivers/pwm/pwm-rockchip-v4.c
+index bece37c9a..bb39a5735 100644
+--- a/drivers/pwm/pwm-rockchip-v4.c
++++ b/drivers/pwm/pwm-rockchip-v4.c
+@@ -142,9 +142,9 @@ static int rockchip_pwm_v4_round_wf_fromhw(struct pwm_chip *chip,
+ 	unsigned long rate = wfhw->rate;
+ 
+ 	if (rate) {
+-		wf->period_length_ns = DIV_ROUND_UP((u64)wfhw->period * NSEC_PER_SEC, rate);
+-		wf->duty_length_ns = DIV_ROUND_UP((u64)wfhw->duty * NSEC_PER_SEC, rate);
+-		wf->duty_offset_ns = DIV_ROUND_UP((u64)wfhw->offset * NSEC_PER_SEC, rate);
++		wf->period_length_ns = DIV_ROUND_UP_ULL((u64)wfhw->period * NSEC_PER_SEC, rate);
++		wf->duty_length_ns = DIV_ROUND_UP_ULL((u64)wfhw->duty * NSEC_PER_SEC, rate);
++		wf->duty_offset_ns = DIV_ROUND_UP_ULL((u64)wfhw->offset * NSEC_PER_SEC, rate);
+ 	} else {
+ 		wf->period_length_ns = 0;
+ 		wf->duty_length_ns = 0;
