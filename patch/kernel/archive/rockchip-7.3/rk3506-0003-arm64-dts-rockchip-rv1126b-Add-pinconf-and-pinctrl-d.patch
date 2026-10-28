@@ -1,7 +1,7 @@
 From 52a1cd056d34cf114f855a6e7975f8714f519d9c Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:53 +0800
-Subject: [PATCH 03/25] arm64: dts: rockchip: rv1126b: Add pinconf and pinctrl
+Subject: [PATCH 03/26] arm64: dts: rockchip: rv1126b: Add pinconf and pinctrl
  dtsi for rv1126b
 
 Add the core pinctrl device tree node and pin definitions for the
@@ -10,12 +10,6 @@ Rockchip RV1126B SoC.
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 
 (cherry picked from commit 2c7f2b6f08afcc454583a3c8e89b731e16472859)
----
- .../boot/dts/rockchip/rv1126b-pinconf.dtsi    |  660 ++++
- .../boot/dts/rockchip/rv1126b-pinctrl.dtsi    | 3218 +++++++++++++++++
- 2 files changed, 3878 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rv1126b-pinconf.dtsi
- create mode 100644 arch/arm64/boot/dts/rockchip/rv1126b-pinctrl.dtsi
 
 diff --git a/arch/arm64/boot/dts/rockchip/rv1126b-pinconf.dtsi b/arch/arm64/boot/dts/rockchip/rv1126b-pinconf.dtsi
 new file mode 100644

@@ -1,7 +1,7 @@
 From d74741d062eb83b366ba846fdb8f2fd55540050b Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:57 +0800
-Subject: [PATCH 07/25] ARM: dts: rockchip: rk3506: Add pinctrl and rmio dtsi
+Subject: [PATCH 07/26] ARM: dts: rockchip: rk3506: Add pinctrl and rmio dtsi
  for rk3506
 
 Add the initial pinctrl configuration files for the Rockchip RK3506 SoC.
@@ -12,12 +12,6 @@ This includes:
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 
 (cherry picked from commit 27d17c1f2a7f30e0d409d0710a64c4c2802611f6)
----
- .../dts/rockchip/rk3506-pinctrl-rmio.dtsi     | 25162 ++++++++++++++++
- .../arm/boot/dts/rockchip/rk3506-pinctrl.dtsi |  1795 ++
- 2 files changed, 26957 insertions(+)
- create mode 100644 arch/arm/boot/dts/rockchip/rk3506-pinctrl-rmio.dtsi
- create mode 100644 arch/arm/boot/dts/rockchip/rk3506-pinctrl.dtsi
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3506-pinctrl-rmio.dtsi b/arch/arm/boot/dts/rockchip/rk3506-pinctrl-rmio.dtsi
 new file mode 100644

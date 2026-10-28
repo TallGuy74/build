@@ -1,7 +1,7 @@
-From f37c8bf7f40e0dda95e758652f8e74c2c8d9cd7d Mon Sep 17 00:00:00 2001
+From c78f7b3d319b92b0d0608039363388198606ffb2 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
-Date: Wed, 28 Oct 2026 16:49:55 +0100
-Subject: [PATCH 22/25] ARM: dts: rockchip: rk3506: Add the peripherals of the
+Date: Wed, 28 Oct 2026 17:04:25 +0100
+Subject: [PATCH 24/26] ARM: dts: rockchip: rk3506: Add the peripherals of the
  SoC
 
 DMA controllers, I2C0-2, UART1/2, SPI0, watchdog 0, the USB2 PHY with its
@@ -10,13 +10,14 @@ output as fifth clock), SARADC, OTP, TSADC and the second USB OTG
 controller, all transcribed from the vendor rk3502.dtsi/rk3506.dtsi and
 left disabled. USB OTG0 gets its PHY.
 
+While at it make the base nodes pass dtbs_check: the GRF and PMU GRF
+syscons have no children, so they are plain "syscon"s, and the CRU
+takes its xin24m input through the "xin" clock the binding requires.
+
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
----
- arch/arm/boot/dts/rockchip/rk3506.dtsi | 301 +++++++++++++++++++++++++
- 1 file changed, 301 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
-index 5c1f5fa21..a88035236 100644
+index 5c1f5fa21..eb20f37a7 100644
 --- a/arch/arm/boot/dts/rockchip/rk3506.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3506.dtsi
 @@ -30,7 +30,13 @@ / {
@@ -33,7 +34,16 @@ index 5c1f5fa21..a88035236 100644
  	};
  
  	cpus {
-@@ -244,9 +250,304 @@ usb_otg0: usb@ff740000 {
+@@ -172,7 +178,7 @@ uart0: serial@ff0a0000 {
+ 	};
+ 
+ 	grf: syscon@ff288000 {
+-		compatible = "rockchip,rk3506-grf", "syscon", "simple-mfd";
++		compatible = "rockchip,rk3506-grf", "syscon";
+ 		reg = <0xff288000 0x4000>;
+ 	};
+ 
+@@ -244,9 +250,302 @@ usb_otg0: usb@ff740000 {
  		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&cru HCLK_USBOTG0>;
  		clock-names = "otg";
@@ -148,7 +158,7 @@ index 5c1f5fa21..a88035236 100644
 +		compatible = "rockchip,rk3506-usb2phy";
 +		reg = <0xff2b0000 0x8000>;
 +		clocks = <&cru CLK_REF_USBPHY_TOP>, <&cru PCLK_USBPHY>;
-+		clock-names = "phyclk", "apb_pclk";
++		clock-names = "phyclk", "pclk";
 +		clock-output-names = "usb480m_phy";
 +		#clock-cells = <0>;
 +		rockchip,usbgrf = <&grf>;
@@ -165,10 +175,8 @@ index 5c1f5fa21..a88035236 100644
 +
 +		u2phy_otg1: host-port {
 +			#phy-cells = <0>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "otg-bvalid", "otg-id", "linestate";
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "linestate";
 +			status = "disabled";
 +		};
 +	};
@@ -273,7 +281,7 @@ index 5c1f5fa21..a88035236 100644
 +	};
 +
 +	saradc: adc@ff4e8000 {
-+		compatible = "rockchip,rk3506-saradc", "rockchip,rk3562-saradc";
++		compatible = "rockchip,rk3506-saradc", "rockchip,rk3528-saradc";
 +		reg = <0xff4e8000 0x8000>;
 +		interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
 +		clocks = <&cru CLK_SARADC>, <&cru PCLK_SARADC>;
@@ -290,9 +298,9 @@ index 5c1f5fa21..a88035236 100644
 +		clocks = <&cru CLK_USER_OTPC_NS>, <&cru PCLK_OTPC_NS>,
 +			 <&cru CLK_SBPI_OTPC_NS>;
 +		clock-names = "otp", "apb_pclk", "sbpi";
-+		resets = <&cru SRST_USER_OTPC_NS>, <&cru SRST_SBPI_OTPC_NS>,
-+			 <&cru SRST_P_OTPC_NS>;
-+		reset-names = "otp", "sbpi", "apb";
++		resets = <&cru SRST_USER_OTPC_NS>, <&cru SRST_P_OTPC_NS>,
++			 <&cru SRST_SBPI_OTPC_NS>;
++		reset-names = "otp", "apb", "sbpi";
 +		#address-cells = <1>;
 +		#size-cells = <1>;
 +
@@ -313,8 +321,8 @@ index 5c1f5fa21..a88035236 100644
 +		clock-names = "tsadc", "apb_pclk";
 +		assigned-clocks = <&cru CLK_TSADC>, <&cru CLK_TSADC_TSEN>;
 +		assigned-clock-rates = <1000000>, <12000000>;
-+		resets = <&cru SRST_TSADC>, <&cru SRST_P_TSADC>;
-+		reset-names = "tsadc", "tsadc-apb";
++		resets = <&cru SRST_P_TSADC>, <&cru SRST_TSADC>;
++		reset-names = "tsadc-apb", "tsadc";
 +		rockchip,grf = <&grf>;
 +		rockchip,hw-tshut-temp = <120000>;
 +		rockchip,hw-tshut-mode = <0>;
@@ -337,4 +345,23 @@ index 5c1f5fa21..a88035236 100644
 +		phy-names = "usb2-phy";
  		status = "disabled";
  	};
+ 
+@@ -259,7 +558,7 @@ usb_otg0: usb@ff740000 {
+ 	 * console bring-up).
+ 	 */
+ 	grf_pmu: syscon@ff910000 {
+-		compatible = "rockchip,rk3506-grf-pmu", "syscon", "simple-mfd";
++		compatible = "rockchip,rk3506-grf-pmu", "syscon";
+ 		reg = <0xff910000 0x4000>;
+ 	};
+ 
+@@ -272,7 +571,8 @@ ioc_pmu: syscon@ff950000 {
+ 	cru: clock-controller@ff9a0000 {
+ 		compatible = "rockchip,rk3506-cru";
+ 		reg = <0xff9a0000 0x20000>;
+-		rockchip,grf = <&grf>;
++		clocks = <&xin24m>;
++		clock-names = "xin";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
  

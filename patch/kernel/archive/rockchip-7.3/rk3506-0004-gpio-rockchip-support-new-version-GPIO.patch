@@ -1,7 +1,7 @@
 From 3581dc833016c48750b9edccd7995686d582b366 Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:54 +0800
-Subject: [PATCH 04/25] gpio: rockchip: support new version GPIO
+Subject: [PATCH 04/26] gpio: rockchip: support new version GPIO
 
 Support the next version GPIO controller on SoCs like rv1126b.
 
@@ -9,9 +9,6 @@ Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
 (cherry picked from commit 52cf753e6fd99d7484fcfcb0be34c910dd0c61e8)
----
- drivers/gpio/gpio-rockchip.c | 2 ++
- 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
 index 77b239a9a..9ba3516fa 100644

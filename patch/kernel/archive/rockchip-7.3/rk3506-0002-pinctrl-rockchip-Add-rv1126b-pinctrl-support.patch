@@ -1,16 +1,12 @@
 From 6e3d03874ec86134b5897a14594af9a4bcc2dacf Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:52 +0800
-Subject: [PATCH 02/25] pinctrl: rockchip: Add rv1126b pinctrl support
+Subject: [PATCH 02/26] pinctrl: rockchip: Add rv1126b pinctrl support
 
 Add gpio and pinctrl support for the 8 GPIO banks on RV1126B.
 
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 (cherry picked from commit fde67e6be299f4624176949280a074dc8e9b611b)
----
- drivers/pinctrl/pinctrl-rockchip.c | 179 +++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-rockchip.h |   1 +
- 2 files changed, 180 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
 index ba47b6f32..8188efc86 100644

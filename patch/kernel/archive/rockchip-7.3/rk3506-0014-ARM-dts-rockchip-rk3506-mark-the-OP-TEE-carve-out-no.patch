@@ -1,7 +1,7 @@
 From ecd05da2614b5f8f12919c8a3b6d44e7ea4b4ebe Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 2 Sep 2026 20:09:27 +0200
-Subject: [PATCH 14/25] ARM: dts: rockchip: rk3506: mark the OP-TEE carve-out
+Subject: [PATCH 14/26] ARM: dts: rockchip: rk3506: mark the OP-TEE carve-out
  no-map
 
 The node carried a TODO(verify) saying that no-map is the idiomatic form
@@ -29,9 +29,6 @@ up and uses that region.
 
 Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
 (cherry picked from commit 0f255fc56c22a134ea6592a7905656ae5387dfa7)
----
- arch/arm/boot/dts/rockchip/rk3506.dtsi | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
 index 253a9c66c..44d1286d6 100644

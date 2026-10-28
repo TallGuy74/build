@@ -1,7 +1,7 @@
 From 0fa21ec401e21b632200b572fe5080f8c09ec936 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 16:49:55 +0100
-Subject: [PATCH 21/25] phy: rockchip: inno-usb2: Add RK3506 support
+Subject: [PATCH 21/26] phy: rockchip: inno-usb2: Add RK3506 support
 
 The RK3506 USB2 PHY has two ports, OTG0 and OTG1, each with the full
 OTG detection register set in the USB GRF (OTG0 at 0x60/0x150, OTG1 at
@@ -11,9 +11,6 @@ suspend, HS eye height 425 mV, and the TX driver's fs/ls data chosen as
 linestate for both ports.
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
----
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 104 ++++++++++++++++++
- 1 file changed, 104 insertions(+)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
 index 7d8a533f2..1f8ce2efa 100644

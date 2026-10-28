@@ -1,7 +1,7 @@
-From 08e572cfa4da02f125c5914d4a8ad255cd2925e8 Mon Sep 17 00:00:00 2001
+From 06cab14a18c82bee8007eda4a15540de3624c8d0 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
-Date: Wed, 28 Oct 2026 16:49:56 +0100
-Subject: [PATCH 23/25] ARM: dts: rockchip: Add Luckfox Lyra PLC
+Date: Wed, 28 Oct 2026 17:04:25 +0100
+Subject: [PATCH 25/26] ARM: dts: rockchip: Add Luckfox Lyra PLC
 
 DIN-rail controller around the RK3506B: 512 MB DDR3L, 8 GB eMMC, two
 RMII Ethernet ports, RS232 on UART1, RS485/RS422 on UART2, a 1.9"
@@ -13,11 +13,6 @@ share this tree. The backlight stays disabled until the RK3506 PWM block
 has a driver.
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
----
- arch/arm/boot/dts/rockchip/Makefile           |   1 +
- .../dts/rockchip/rk3506b-luckfox-lyra-plc.dts | 267 ++++++++++++++++++
- 2 files changed, 268 insertions(+)
- create mode 100644 arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
 
 diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
 index 88b01f3d0..4268753e8 100644
@@ -31,10 +26,10 @@ index 88b01f3d0..4268753e8 100644
  	rk3506g-luckfox-lyra-plus.dtb
 diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
 new file mode 100644
-index 000000000..944ded48b
+index 000000000..df4a620f5
 --- /dev/null
 +++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
-@@ -0,0 +1,267 @@
+@@ -0,0 +1,269 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Luckfox Lyra PLC: RK3506B DIN-rail controller with a 1.9" ST7789V SPI panel and CST816S touch,
@@ -248,6 +243,8 @@ index 000000000..944ded48b
 +		compatible = "sitronix,st7789v";
 +		reg = <0>;
 +		spi-max-frequency = <50000000>;
++		power-supply = <&vcc_3v3>;
++		/* fbtft (staging) properties; the sitronix,st7789v panel schema does not know them */
 +		buswidth = <8>;
 +		fps = <60>;
 +		dc-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;

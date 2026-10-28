@@ -1,7 +1,7 @@
 From 0b9d0c307d8f15db394c3d515dd4f7eca13abf93 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:17:18 +0200
-Subject: [PATCH 10/25] ARM: dts: rockchip: Add Luckfox Lyra Plus board
+Subject: [PATCH 10/26] ARM: dts: rockchip: Add Luckfox Lyra Plus board
 
 The Luckfox Lyra Plus is an RK3506G2 board with 128 MiB of DDR3L.
 
@@ -13,11 +13,6 @@ size here only matters when the dtb is booted standalone.
 Signed-off-by: Walter Dal Mut <walter.dalmut@corley.it>
 
 (cherry picked from commit f3d73cf8c33f26378507f5c2859c750e49e28558)
----
- arch/arm/boot/dts/rockchip/Makefile           |  3 +-
- .../rockchip/rk3506g-luckfox-lyra-plus.dts    | 33 +++++++++++++++++++
- 2 files changed, 35 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
 
 diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
 index e9f9e0ac3..88b01f3d0 100644

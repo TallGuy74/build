@@ -1,7 +1,7 @@
 From b17675394ff8e830ebeee4b04be996cb360adeb0 Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:56 +0800
-Subject: [PATCH 06/25] pinctrl: rockchip: Add RK3506 RMIO support
+Subject: [PATCH 06/26] pinctrl: rockchip: Add RK3506 RMIO support
 
 On the RK3506 SoC, some pins support a secondary muxing layer via the
 RMIO (Rockchip Matrix I/O) block. This allows expanding the number of
@@ -14,10 +14,6 @@ pin-to-RMIO mapping.
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 
 (cherry picked from commit 5fe9d1e7eb6bccd248a48f506f9d6220a802062b)
----
- drivers/pinctrl/pinctrl-rockchip.c | 101 ++++++++++++++++++++++++++++-
- drivers/pinctrl/pinctrl-rockchip.h |  19 ++++++
- 2 files changed, 117 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
 index 8188efc86..a3dce9998 100644
