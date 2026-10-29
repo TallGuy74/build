@@ -1,7 +1,7 @@
 From 1a06c51a0e30a5fa868674b8a70e3a61eaa8d5d2 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 00:02:48 +0100
-Subject: [PATCH 50/50] ARM: dts: rockchip: lyra-plc: Enable CAN0 on the
+Subject: [PATCH 50/53] ARM: dts: rockchip: lyra-plc: Enable CAN0 on the
  terminal block
 
 CAN0 on RM_IO12/RM_IO13 with the 200 MHz bit-rate clock the stock tree

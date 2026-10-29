@@ -1,0 +1,59 @@
+From e26c96748bfbba4dc201b6c256eef8af0948f348 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 01:17:38 +0100
+Subject: [PATCH 52/53] thermal: rockchip: Take the optional "tsen" clock of
+ the sensor
+
+The RK3506 clocks the temperature sensor's analogue block from a
+separate 12 MHz clock (CLK_TSADC_TSEN). Without a consumer it is gated at
+late init and the TSADC returns nonsense (4 to 10 degrees on a warm
+SoC). Accept an optional third clock named "tsen" and keep it enabled;
+the binding allows it as a third entry.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+index ce7558d73..7fef0d684 100644
+--- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+@@ -34,12 +34,14 @@ properties:
+ 
+   clocks:
+     minItems: 2
+-    maxItems: 2
++    maxItems: 3
+ 
+   clock-names:
++    minItems: 2
+     items:
+       - const: tsadc
+       - const: apb_pclk
++      - const: tsen
+ 
+   nvmem-cells:
+     items:
+diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+index c07d4be7f..71216f174 100644
+--- a/drivers/thermal/rockchip_thermal.c
++++ b/drivers/thermal/rockchip_thermal.c
+@@ -165,6 +165,7 @@ struct rockchip_thermal_data {
+ 
+ 	struct clk *clk;
+ 	struct clk *pclk;
++	struct clk *tsen_clk;
+ 
+ 	struct regmap *grf;
+ 	void __iomem *regs;
+@@ -1803,6 +1804,12 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(thermal->pclk),
+ 				     "failed to get apb_pclk clock.\n");
+ 
++	/* Some SoCs (RK3506) clock the sensor's analogue block separately. */
++	thermal->tsen_clk = devm_clk_get_optional_enabled(&pdev->dev, "tsen");
++	if (IS_ERR(thermal->tsen_clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(thermal->tsen_clk),
++				     "failed to get tsen clock\n");
++
+ 	rockchip_thermal_reset_controller(thermal->reset);
+ 
+ 	error = rockchip_configure_from_dt(&pdev->dev, np, thermal);

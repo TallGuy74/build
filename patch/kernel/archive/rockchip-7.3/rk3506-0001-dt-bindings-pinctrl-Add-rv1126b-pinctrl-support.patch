@@ -1,7 +1,7 @@
 From fb0eea48fd17c3809a315da2b4b42f6bcafa002a Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:51 +0800
-Subject: [PATCH 01/50] dt-bindings: pinctrl: Add rv1126b pinctrl support
+Subject: [PATCH 01/53] dt-bindings: pinctrl: Add rv1126b pinctrl support
 
 The RV1126B is a new SoC that is the successor of the RV1126. It has
 different pinctrl registers and is not compatible with the RV1126.

@@ -1,7 +1,7 @@
 From 9ceb292ecb877ddb115bf5d070e6c63fe2b6fc3f Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 22:44:29 +0100
-Subject: [PATCH 39/50] staging: fbtft: fb_st7789v: Support glass smaller than
+Subject: [PATCH 39/53] staging: fbtft: fb_st7789v: Support glass smaller than
  the controller RAM
 
 The ST7789V has a 240x320 frame memory, but many panels built on it are
