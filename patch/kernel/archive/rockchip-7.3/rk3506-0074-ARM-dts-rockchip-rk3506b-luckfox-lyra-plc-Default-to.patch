@@ -1,0 +1,24 @@
+From c32262e598a09c16c52ff9ca7a28175d06d26f08 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 23:19:35 +0100
+Subject: [PATCH 74/74] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Default
+ to a dimmer backlight
+
+Start the backlight at level 3 (60 of 255) instead of 10 (200 of 255),
+the level chosen by looking at the panel through the steps.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 9bedd49bd..882b47e7a 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -70,7 +70,7 @@ backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm0_4ch_2 0 25000 PWM_POLARITY_INVERTED>;
+ 		brightness-levels = <0 20 40 60 80 100 120 140 160 180 200 220 240 255>;
+-		default-brightness-level = <10>;
++		default-brightness-level = <3>;
+ 	};
+ 
+ 	leds {

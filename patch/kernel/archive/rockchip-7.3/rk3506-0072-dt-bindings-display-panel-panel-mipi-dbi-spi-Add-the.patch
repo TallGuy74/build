@@ -1,7 +1,7 @@
-From 16e44c1da3db0b4eae16d7281da458188ce83b6c Mon Sep 17 00:00:00 2001
+From 7f065ea56fe240affcd6237092207356b4f72569 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 22:37:28 +0100
-Subject: [PATCH 72/73] dt-bindings: display: panel: panel-mipi-dbi-spi: Add
+Subject: [PATCH 72/74] dt-bindings: display: panel: panel-mipi-dbi-spi: Add
  the Luckfox Lyra PLC LCD
 
 The Luckfox Lyra PLC has a 1.9" 170x320 IPS glass on a Sitronix ST7789V

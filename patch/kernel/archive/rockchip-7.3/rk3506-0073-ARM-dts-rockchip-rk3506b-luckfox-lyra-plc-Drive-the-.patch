@@ -1,7 +1,7 @@
-From 0394a0c4b512c366f112ff1854b190e75b15b677 Mon Sep 17 00:00:00 2001
+From 691cc2dfe7ac208806d371b2161671d4cab90638 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 22:37:28 +0100
-Subject: [PATCH 73/73] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Drive the
+Subject: [PATCH 73/74] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Drive the
  LCD with panel-mipi-dbi
 
 Describe the LCD for the generic MIPI DBI panel driver instead of the

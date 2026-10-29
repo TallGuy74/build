@@ -1,7 +1,7 @@
-From 7d92495f129924353f91513edb309f5a909403cc Mon Sep 17 00:00:00 2001
+From d55ec3205a128309cbf334f31e1ad17d3cdc54ff Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 13:23:10 +0100
-Subject: [PATCH 70/73] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Describe
+Subject: [PATCH 70/74] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Describe
  the Ethernet PHY and the second USB controller
 
 Taken over from the vendor board files (rk3506g-luckfox-lyra-plus-sd.dts

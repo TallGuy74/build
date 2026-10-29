@@ -1,7 +1,7 @@
-From 41e7c6c54adb3c9b8fdf7b27d70d0545fb9ee19f Mon Sep 17 00:00:00 2001
+From 6591ddf2474582b43800076b0cf34247ba2d8086 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 12:24:18 +0100
-Subject: [PATCH 67/73] usb: misc: onboard_usb_dev: Add the AICSemi AIC8800DC
+Subject: [PATCH 67/74] usb: misc: onboard_usb_dev: Add the AICSemi AIC8800DC
  Wi-Fi/BT module
 
 The AIC8800DC is a USB Wi-Fi and Bluetooth module soldered onto boards

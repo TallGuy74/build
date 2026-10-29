@@ -1,7 +1,7 @@
-From 3efec198c213adc8c76d31b32fe840b8c3cbc7b1 Mon Sep 17 00:00:00 2001
+From b774a9e17e01ec73acd5738ffe617c2a20d86611 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 22:10:48 +0100
-Subject: [PATCH 71/73] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Drop the
+Subject: [PATCH 71/74] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Drop the
  backlight supply
 
 The backlight named vcc_3v3 as its power supply. That rail is the

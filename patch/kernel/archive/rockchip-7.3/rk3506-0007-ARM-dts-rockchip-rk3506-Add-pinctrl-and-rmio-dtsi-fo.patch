@@ -1,7 +1,7 @@
 From d74741d062eb83b366ba846fdb8f2fd55540050b Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:57 +0800
-Subject: [PATCH 07/73] ARM: dts: rockchip: rk3506: Add pinctrl and rmio dtsi
+Subject: [PATCH 07/74] ARM: dts: rockchip: rk3506: Add pinctrl and rmio dtsi
  for rk3506
 
 Add the initial pinctrl configuration files for the Rockchip RK3506 SoC.
