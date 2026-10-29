@@ -1,0 +1,123 @@
+From 1aa637943410c83c9874b0bf19fe5ab259a4c88b Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 10:43:10 +0100
+Subject: [PATCH 61/61] ARM: dts: rockchip: rk3506: Vendor operating points up
+ to 1.512 GHz
+
+With armclk re-rating v1pll, carry the vendor tree points and their
+base voltages: 600/800/1008/1200 MHz at 850 mV, 1296 at 900 mV, 1416 at
+937.5 mV and 1512 MHz at 975 mV. The vendor kernel lowers these per
+chip from OTP data, which is not modelled here.
+
+Drop the fixed v1pll rate from the CRU node (cpufreq owns v1pll now) and
+pin the CAN bit clocks to v0pll at 300 MHz (294 MHz) as the vendor tree
+does, so that cpufreq never moves them.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+index 202f293bc..ee16af6f6 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+@@ -76,30 +76,56 @@ cpu2: cpu@f02 {
+ 	};
+ 
+ 	/*
+-	 * cpufreq muxes the cores between the PLLs at fixed rates, so the
+-	 * points are what gpll (1.5 GHz) and v1pll (pinned to 1.2 GHz by the
+-	 * CRU node) divide to and the armclk table knows. 850 mV covers all of
+-	 * them in the vendor tree.
++	 * The vendor tree's points and base voltages (it lowers them per chip
++	 * from OTP data, which is not modelled here). armclk re-rates v1pll for
++	 * each point and parks the cores on gpll meanwhile.
+ 	 */
+ 	cpu0_opp_table: opp-table-cpu {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+-		opp-400000000 {
+-			opp-hz = /bits/ 64 <400000000>;
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
+ 			opp-microvolt = <850000 850000 1207000>;
+ 			clock-latency-ns = <40000>;
++			opp-suspend;
+ 		};
+-		opp-750000000 {
+-			opp-hz = /bits/ 64 <750000000>;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <850000 850000 1207000>;
++			clock-latency-ns = <40000>;
++		};
++
++		opp-1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
+ 			opp-microvolt = <850000 850000 1207000>;
+ 			clock-latency-ns = <40000>;
+ 		};
++
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <850000 850000 1207000>;
+ 			clock-latency-ns = <40000>;
+ 		};
++
++		opp-1296000000 {
++			opp-hz = /bits/ 64 <1296000000>;
++			opp-microvolt = <900000 900000 1207000>;
++			clock-latency-ns = <40000>;
++		};
++
++		opp-1416000000 {
++			opp-hz = /bits/ 64 <1416000000>;
++			opp-microvolt = <937500 937500 1207000>;
++			clock-latency-ns = <40000>;
++		};
++
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <975000 975000 1207000>;
++			clock-latency-ns = <40000>;
++		};
+ 	};
+ 
+ 	psci {
+@@ -553,6 +579,10 @@ can0: can@ff320000 {
+ 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru CLK_CAN0>, <&cru HCLK_CAN0>;
+ 		clock-names = "baudclk", "apb_pclk";
++		/* keep the bit clock off v1pll, which cpufreq re-rates */
++		assigned-clocks = <&cru CLK_CAN0>;
++		assigned-clock-parents = <&cru CLK_V0PLL_GATE>;
++		assigned-clock-rates = <300000000>;
+ 		resets = <&cru SRST_CAN0>, <&cru SRST_H_CAN0>;
+ 		reset-names = "can", "can-apb";
+ 		status = "disabled";
+@@ -564,6 +594,10 @@ can1: can@ff330000 {
+ 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru CLK_CAN1>, <&cru HCLK_CAN1>;
+ 		clock-names = "baudclk", "apb_pclk";
++		/* keep the bit clock off v1pll, which cpufreq re-rates */
++		assigned-clocks = <&cru CLK_CAN1>;
++		assigned-clock-parents = <&cru CLK_V0PLL_GATE>;
++		assigned-clock-rates = <300000000>;
+ 		resets = <&cru SRST_CAN1>, <&cru SRST_H_CAN1>;
+ 		reset-names = "can", "can-apb";
+ 		status = "disabled";
+@@ -811,12 +845,10 @@ cru: clock-controller@ff9a0000 {
+ 		 */
+ 		assigned-clocks =
+ 			<&cru CLK_FRAC_UART_MATRIX0>,
+-			<&cru CLK_FRAC_UART_MATRIX1>,
+-			<&cru PLL_V1PLL>;
++			<&cru CLK_FRAC_UART_MATRIX1>;
+ 		assigned-clock-rates =
+ 			<96000000>,
+-			<128000000>,
+-			<1200000000>;
++			<128000000>;
+ 	};
+ 
+ 	pinctrl: pinctrl {
