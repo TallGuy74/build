@@ -5,9 +5,10 @@ Subject: [PATCH] video: logo: BlackstarEMS boot logo for the Luckfox Lyra PLC
 
 Replace the 224-colour Linux logo with the BlackstarEMS brand mark and
 wordmark (245x48 on black), shown by fbcon on the PLC's panel between
-the first console output and the status panel service. Board-scoped in
-the Armbian tree (board_luckfox-lyra-plc/), not part of the RK3506
-series.
+the first console output and the status panel service. Fork-only
+branding: Armbian applies kernel patches per family, so this patch
+brands every rockchip-7.3 edge kernel built from this tree; it is not
+part of the RK3506 series and must not go upstream.
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 
