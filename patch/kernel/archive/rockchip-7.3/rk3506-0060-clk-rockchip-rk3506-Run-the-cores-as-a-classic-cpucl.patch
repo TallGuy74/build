@@ -1,4 +1,4 @@
-From ccbd873e6074a27793329f9895834218ef836db3 Mon Sep 17 00:00:00 2001
+From 421c8e45dd7b5105857e59e81999ee27d96e7662 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 10:43:09 +0100
 Subject: [PATCH 60/61] clk: rockchip: rk3506: Run the cores as a classic

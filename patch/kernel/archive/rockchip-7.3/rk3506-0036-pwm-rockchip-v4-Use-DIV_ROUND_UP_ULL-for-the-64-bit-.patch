@@ -1,4 +1,4 @@
-From 4f6ddfbe59bffb08791f8eb9193602a4d838df57 Mon Sep 17 00:00:00 2001
+From f2f07f2cafcd462ff185b16d99b0cf12b9ffd7ea Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 20:35:31 +0100
 Subject: [PATCH 36/61] pwm: rockchip-v4: Use DIV_ROUND_UP_ULL for the 64-bit

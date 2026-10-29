@@ -1,4 +1,4 @@
-From 41988b23ee07456cb1024b2886a328e77897087e Mon Sep 17 00:00:00 2001
+From 3dcd1e7f421d443a1303ff5a531e0a9ea73afb42 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 00:02:47 +0100
 Subject: [PATCH 47/61] dt-bindings: net: can: Add the Rockchip RK3576-type CAN

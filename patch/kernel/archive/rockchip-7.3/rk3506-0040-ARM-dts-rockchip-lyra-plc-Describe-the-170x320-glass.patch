@@ -1,4 +1,4 @@
-From dd993affe31ea812cb2b73139bc5441e82a28bde Mon Sep 17 00:00:00 2001
+From 1d079ddcd9b053bf38a7130c8f40a8d106924189 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 22:44:33 +0100
 Subject: [PATCH 40/61] ARM: dts: rockchip: lyra-plc: Describe the 170x320

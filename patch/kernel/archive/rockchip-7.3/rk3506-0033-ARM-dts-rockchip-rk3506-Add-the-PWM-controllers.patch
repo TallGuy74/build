@@ -1,4 +1,4 @@
-From 1a3f572bcc478248e6ff6582285e9dd7a96359db Mon Sep 17 00:00:00 2001
+From 2189f3e3c777720bdf346599ea12e1660f29136e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:24:21 +0100
 Subject: [PATCH 33/61] ARM: dts: rockchip: rk3506: Add the PWM controllers

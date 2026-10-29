@@ -1,4 +1,4 @@
-From bd7951aa6fb59fa4fdb737f640ee83e67e674c4e Mon Sep 17 00:00:00 2001
+From dc3d892b42303a2d2e73197fa35bedb19b2c19fe Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 23:50:58 +0100
 Subject: [PATCH 45/61] ARM: dts: rockchip: lyra-plc: Feed the CPUs from

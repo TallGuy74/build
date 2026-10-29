@@ -1,4 +1,4 @@
-From bf520ae5cde39fc9df0ef6d80dd1d5b7d47e6c53 Mon Sep 17 00:00:00 2001
+From 305cc71ae67f0181d2353519bc219e57d1c1fb22 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 23:50:58 +0100
 Subject: [PATCH 44/61] ARM: dts: rockchip: rk3506: Add the CPU OPP table and a

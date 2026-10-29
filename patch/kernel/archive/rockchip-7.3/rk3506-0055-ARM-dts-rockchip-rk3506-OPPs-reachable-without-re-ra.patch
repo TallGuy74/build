@@ -1,4 +1,4 @@
-From 80bf5ca3e72d233e5ac38ca263dd1da0a532ec88 Mon Sep 17 00:00:00 2001
+From 25012228b454fa18f8a1e2e36f34f596b72aa219 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 01:42:49 +0100
 Subject: [PATCH 55/61] ARM: dts: rockchip: rk3506: OPPs reachable without

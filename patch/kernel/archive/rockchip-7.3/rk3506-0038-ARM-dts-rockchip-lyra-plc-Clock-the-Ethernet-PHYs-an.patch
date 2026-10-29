@@ -1,4 +1,4 @@
-From 89bbcb0bd131e0a9f61be866d83f10736fd70bf6 Mon Sep 17 00:00:00 2001
+From 35255b4690ab82332de0e937f861a7aef9e51a6e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 22:19:38 +0100
 Subject: [PATCH 38/61] ARM: dts: rockchip: lyra-plc: Clock the Ethernet PHYs

@@ -1,4 +1,4 @@
-From 68f198958cab5ff781656518afd2873a7f4780b9 Mon Sep 17 00:00:00 2001
+From cc5f644d55a7d3f8f4b8567eb6a022a8231b543a Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 09:57:37 +0100
 Subject: [PATCH 58/61] staging: fbtft: Enable a backlight referenced from the
