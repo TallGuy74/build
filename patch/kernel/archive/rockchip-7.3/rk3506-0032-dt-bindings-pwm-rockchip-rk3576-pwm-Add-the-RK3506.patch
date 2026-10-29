@@ -1,7 +1,7 @@
 From f04ed8c376384a9d29393c9d7cea89b93b3b6262 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:24:20 +0100
-Subject: [PATCH 32/56] dt-bindings: pwm: rockchip,rk3576-pwm: Add the RK3506
+Subject: [PATCH 32/57] dt-bindings: pwm: rockchip,rk3576-pwm: Add the RK3506
 
 The RK3506 carries the same PWMv4 blocks (one with four channels in the
 PMU domain, one with eight) and the vendor tree already describes them

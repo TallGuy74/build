@@ -1,7 +1,7 @@
 From 2319038068d7d3f06e5617de172a6236c96771ab Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:04:24 +0100
-Subject: [PATCH 23/56] dt-bindings: pinctrl: rockchip: Document the
+Subject: [PATCH 23/57] dt-bindings: pinctrl: rockchip: Document the
  rockchip,ioc1 phandle
 
 pinctrl-rockchip.c looks up an optional "rockchip,ioc1" syscon next to

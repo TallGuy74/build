@@ -1,0 +1,39 @@
+From abb8c3cc0665d0c73f1a3c04f33141d993497f7b Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 08:11:52 +0100
+Subject: [PATCH 57/57] thermal: rockchip: rk3506: Enable the quantised
+ conversion select
+
+The RK3506 code table assumes the TSADC's Q_SEL conversion mode, which
+the vendor init sequence switches on in AUTO_CON. Without it the raw
+code sits about 64 counts low: a Luckfox Lyra read 13 degrees where the
+vendor kernel on an identical unit read 52. Set AUTO_Q_SEL_EN in the
+rk3506 initialisation, as the vendor driver does.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+index 71216f174..1eed42e67 100644
+--- a/drivers/thermal/rockchip_thermal.c
++++ b/drivers/thermal/rockchip_thermal.c
+@@ -223,6 +223,7 @@ struct rockchip_thermal_data {
+ #define TSADCV2_AUTO_TSHUT_POLARITY_MASK	BIT(24)
+ 
+ #define TSADCV3_AUTO_Q_SEL_EN			BIT(1)
++#define TSADCV3_AUTO_Q_SEL_EN_MASK		BIT(17)
+ 
+ #define TSADCV2_INT_SRC_EN(chn)			BIT(chn)
+ #define TSADCV2_INT_SRC_EN_MASK(chn)		BIT(16 + (chn))
+@@ -870,6 +871,12 @@ static void rk_tsadcv9_initialize(struct regmap *grf, void __iomem *regs,
+ 			       regs + TSADCV2_AUTO_CON);
+ 	else
+ 		writel_relaxed(TSADCV2_AUTO_TSHUT_POLARITY_MASK, regs + TSADCV2_AUTO_CON);
++	/*
++	 * Select the quantised conversion the code table was made for;
++	 * without it the sensor reads some 40 degrees low.
++	 */
++	writel_relaxed(TSADCV3_AUTO_Q_SEL_EN | TSADCV3_AUTO_Q_SEL_EN_MASK,
++		       regs + TSADCV2_AUTO_CON);
+ }
+ 
+ static void rk_tsadcv8_initialize(struct regmap *grf, void __iomem *regs,

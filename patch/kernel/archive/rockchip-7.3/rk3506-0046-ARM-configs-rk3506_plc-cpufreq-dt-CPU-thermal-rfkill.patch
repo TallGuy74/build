@@ -1,7 +1,7 @@
 From 065773a511e3a201a9b862b1c13c9a27c2e32260 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 23:50:58 +0100
-Subject: [PATCH 46/56] ARM: configs: rk3506_plc: cpufreq-dt, CPU thermal,
+Subject: [PATCH 46/57] ARM: configs: rk3506_plc: cpufreq-dt, CPU thermal,
  rfkill-gpio
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>

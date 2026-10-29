@@ -1,7 +1,7 @@
 From 06cab14a18c82bee8007eda4a15540de3624c8d0 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:04:25 +0100
-Subject: [PATCH 25/56] ARM: dts: rockchip: Add Luckfox Lyra PLC
+Subject: [PATCH 25/57] ARM: dts: rockchip: Add Luckfox Lyra PLC
 
 DIN-rail controller around the RK3506B: 512 MB DDR3L, 8 GB eMMC, two
 RMII Ethernet ports, RS232 on UART1, RS485/RS422 on UART2, a 1.9"
