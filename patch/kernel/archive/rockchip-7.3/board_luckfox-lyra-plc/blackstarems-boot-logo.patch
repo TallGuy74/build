@@ -1,11 +1,15 @@
+From 8337a514bf4bc2b5a2bd94231cbdc13af854eb4a Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 13:35:36 +0100
 Subject: [PATCH] video: logo: BlackstarEMS boot logo for the Luckfox Lyra PLC
 
 Replace the 224-colour Linux logo with the BlackstarEMS brand mark and
-wordmark (245x48, black background), shown by fbcon on the PLC's panel
-between the first console output and the status panel service.
-Board-scoped: this patch lives in board_luckfox-lyra-plc/ and does not
-touch other boards of the family.
+wordmark (245x48 on black), shown by fbcon on the PLC's panel between
+the first console output and the status panel service. Board-scoped in
+the Armbian tree (board_luckfox-lyra-plc/), not part of the RK3506
+series.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 
 diff --git a/drivers/video/logo/logo_linux_clut224.ppm b/drivers/video/logo/logo_linux_clut224.ppm
 index 3c14e43b8..19b6cb183 100644
