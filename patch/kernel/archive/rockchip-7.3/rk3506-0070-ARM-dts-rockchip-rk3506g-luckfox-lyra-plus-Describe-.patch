@@ -1,0 +1,65 @@
+From 45368766a7690b617a5d1c1113a54ab871d5265b Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 13:23:10 +0100
+Subject: [PATCH 70/70] ARM: dts: rockchip: rk3506g-luckfox-lyra-plus: Describe
+ the Ethernet PHY and the second USB controller
+
+From the vendor board files (rk3506g-luckfox-lyra-plus-sd.dts and
+rk3506-luckfox-lyra.dtsi): an RMII PHY at address 1 on the second GMAC
+with the MAC driving the reference clock and a reset on GPIO1_D0, and
+the second DWC2 controller in host mode with both USB2 PHY ports
+enabled. Not tested on a Lyra Plus; the same description runs on the
+Lyra PLC.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+index 9047e5fbd..9da9c3d7f 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus.dts
+@@ -90,3 +90,45 @@ &usb_otg0 {
+ 	dr_mode = "peripheral";
+ 	status = "okay";
+ };
++
++/*
++ * RMII PHY at address 1 on the second GMAC, as the vendor board dts: the
++ * MAC drives the reference clock, the PHY reset is GPIO1_D0 (20 ms
++ * asserted, 100 ms to settle).
++ */
++&gmac1 {
++	clock_in_out = "output";
++	phy-handle = <&rmii_phy1>;
++	phy-mode = "rmii";
++	pinctrl-names = "default";
++	pinctrl-0 = <&eth_rmii1_miim_pins>, <&eth_rmii1_tx_bus2_pins>,
++		    <&eth_rmii1_rx_bus2_pins>, <&eth_rmii1_clk_pins>;
++	status = "okay";
++};
++
++&mdio1 {
++	rmii_phy1: ethernet-phy@1 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <1>;
++		reset-gpios = <&gpio1 RK_PD0 GPIO_ACTIVE_LOW>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++	};
++};
++
++&u2phy {
++	status = "okay";
++};
++
++&u2phy_otg0 {
++	status = "okay";
++};
++
++&u2phy_otg1 {
++	status = "okay";
++};
++
++&usb_otg1 {
++	dr_mode = "host";
++	status = "okay";
++};

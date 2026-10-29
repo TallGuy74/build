@@ -1,7 +1,7 @@
 From f4d1b789a5809e8988351ba2cc4b0f0935a0843d Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 11:32:55 +0100
-Subject: [PATCH 63/68] dmaengine: Add the Rockchip RK3506 DMAC0 request-line
+Subject: [PATCH 63/70] dmaengine: Add the Rockchip RK3506 DMAC0 request-line
  mux
 
 The RK3506 shares the request lines of its first PL330 between several

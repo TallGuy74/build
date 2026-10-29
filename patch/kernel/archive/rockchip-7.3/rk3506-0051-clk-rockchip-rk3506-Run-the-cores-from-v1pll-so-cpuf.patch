@@ -1,7 +1,7 @@
 From d0414b73186c157b6eb257be7d573f27f6e1e332 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 01:17:38 +0100
-Subject: [PATCH 51/68] clk: rockchip: rk3506: Run the cores from v1pll so
+Subject: [PATCH 51/70] clk: rockchip: rk3506: Run the cores from v1pll so
  cpufreq can work
 
 The boot loader leaves the CPU mux on the PVTPLL, which has no clock

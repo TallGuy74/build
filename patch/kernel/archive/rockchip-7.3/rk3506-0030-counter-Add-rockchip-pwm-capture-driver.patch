@@ -1,7 +1,7 @@
 From 10dbac25b26722a120e41a961acd2afdc0ba6ae0 Mon Sep 17 00:00:00 2001
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Date: Mon, 20 Apr 2026 06:52:41 -0700
-Subject: [PATCH 30/68] counter: Add rockchip-pwm-capture driver
+Subject: [PATCH 30/70] counter: Add rockchip-pwm-capture driver
 
 Among many other things, Rockchip's new PWMv4 IP in the RK3576 supports
 PWM capture functionality.
