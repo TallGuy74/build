@@ -1,0 +1,8 @@
+[Unit]
+Description=Check the AIC8800 Bluetooth controller %I after it appeared
+Documentation=file:/usr/local/sbin/aic8800-bt-selfheal
+After=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/aic8800-bt-selfheal %I

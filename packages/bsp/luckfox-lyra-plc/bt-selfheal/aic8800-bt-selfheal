@@ -1,0 +1,55 @@
+#!/bin/sh
+# aic8800-bt-selfheal hciN - check an AIC8800DC Bluetooth controller some seconds after it appeared, and repair it.
+#
+# Started by aic8800-bt-selfheal@hciN.service, which 90-aic8800-bt-selfheal.rules pulls in when the controller
+# appears. After the Wi-Fi/BT module re-enumerates (a power cycle through onboard-usb-dev, a USB reset) the
+# controller can stop answering for up to ~8 s while the Wi-Fi driver loads its firmware and the Bluetooth patch.
+# The kernel gives up on a command after 2 s, so either its setup fails (the controller never reaches bluetoothd)
+# or bluetoothd's power-on fails (left down). The stall is usually over within ~8 s but has lasted ~45 s, and a
+# setup after it always works, so: wait, and while the controller is not up, rebind its USB interface (which reruns
+# the setup and lets bluetoothd power it on as at boot), backing off between attempts (about three minutes in all).
+# Nothing is done for a controller that is rfkill-blocked, or when bluetoothd's AutoEnable is off (down is then
+# the expected state). The state comes from hciconfig (an ioctl): btmgmt and bluetoothctl are interactive shells
+# underneath and do not answer reliably when run from a service.
+set -u
+HCI=${1:?usage: aic8800-bt-selfheal hciN}
+WAITS="15 20 30 45 60"
+
+log() { echo "$HCI: $*"; }
+
+grep -qiE '^[[:space:]]*AutoEnable[[:space:]]*=[[:space:]]*false' /etc/bluetooth/main.conf 2>/dev/null && exit 0
+
+blocked() {
+    for r in /sys/class/bluetooth/$HCI/rfkill*; do
+        [ -e "$r/soft" ] || continue
+        if [ "$(cat "$r/soft")" = 1 ] || [ "$(cat "$r/hard")" = 1 ]; then return 0; fi
+    done
+    return 1
+}
+
+up() { hciconfig "$HCI" 2>/dev/null | grep -q "UP RUNNING"; }
+
+for wait in $WAITS; do
+    sleep "$wait"
+    [ -e /sys/class/bluetooth/$HCI ] || { log "gone"; exit 0; }
+    if blocked; then log "rfkill-blocked, leaving it alone"; exit 0; fi
+    if up; then
+        [ "${repaired:-0}" = 0 ] || log "up after $repaired rebind(s)"
+        exit 0
+    fi
+    dev=$(basename "$(readlink -f /sys/class/bluetooth/$HCI/device)")
+    drv=$(basename "$(readlink -f /sys/class/bluetooth/$HCI/device/driver)")
+    log "not up (start-up stall), rebinding $dev to $drv"
+    echo "$dev" > /sys/bus/usb/drivers/$drv/unbind
+    sleep 1
+    echo "$dev" > /sys/bus/usb/drivers/$drv/bind
+    repaired=$(( ${repaired:-0} + 1 ))
+    # the controller may come back under another index
+    sleep 2
+    n=$(ls /sys/bus/usb/devices/$dev/bluetooth 2>/dev/null | head -1)
+    [ -n "$n" ] && HCI=$n
+done
+sleep 20
+if up; then log "up after $repaired rebind(s)"; exit 0; fi
+log "still not up after $repaired rebinds"
+exit 1

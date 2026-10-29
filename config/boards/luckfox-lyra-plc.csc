@@ -61,3 +61,15 @@ function post_install_kernel_debs__600_patch_aic8800_dkms_for_lyra_plc() {
 	declare -ag if_error_find_files_sdcard=("/var/lib/dkms/aic8800*/*/build/*.log")
 	use_clean_environment="yes" chroot_sdcard "dkms build -m aic8800-usb -v ${ver} -k ${kver} --force && dkms install -m aic8800-usb -v ${ver} -k ${kver} --force"
 }
+
+# The AIC8800DC's Bluetooth controller can stall for seconds (once ~45 s) after the module re-enumerates (a power cycle
+# through onboard-usb-dev, a USB reset): the kernel gives up on a command after 2 s, so its setup or bluetoothd's
+# power-on fails and the controller stays down. A udev rule starts a check per controller that rebinds its USB
+# interface, backing off, until it is up; see packages/bsp/luckfox-lyra-plc/bt-selfheal/aic8800-bt-selfheal.
+function post_family_tweaks__luckfox-lyra-plc_bt_selfheal() {
+	declare src="${SRC}/packages/bsp/luckfox-lyra-plc/bt-selfheal"
+	display_alert "Installing the AIC8800 Bluetooth self-heal check" "${BOARD}" "info"
+	run_host_command_logged install -D -m 0755 "${src}/aic8800-bt-selfheal" "${SDCARD}/usr/local/sbin/aic8800-bt-selfheal"
+	run_host_command_logged install -D -m 0644 "${src}/aic8800-bt-selfheal@.service" "${SDCARD}/etc/systemd/system/aic8800-bt-selfheal@.service"
+	run_host_command_logged install -D -m 0644 "${src}/90-aic8800-bt-selfheal.rules" "${SDCARD}/etc/udev/rules.d/90-aic8800-bt-selfheal.rules"
+}

@@ -1,0 +1,3 @@
+# AIC8800DC USB Wi-Fi/Bluetooth (Luckfox Lyra PLC): once the Bluetooth controller has appeared, check it and rerun its
+# setup or power it on if the chip's start-up stall broke them (see /usr/local/sbin/aic8800-bt-selfheal).
+ACTION=="add", SUBSYSTEM=="bluetooth", ENV{DEVTYPE}=="host", ATTRS{idVendor}=="a69c", ATTRS{idProduct}=="88dc", TAG+="systemd", ENV{SYSTEMD_WANTS}+="aic8800-bt-selfheal@%k.service"
