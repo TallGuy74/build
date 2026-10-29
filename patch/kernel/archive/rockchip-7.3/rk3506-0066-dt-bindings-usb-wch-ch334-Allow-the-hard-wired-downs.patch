@@ -1,7 +1,7 @@
 From c77abb40f27f96cc0446de3a3cc060c14999445e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 12:24:18 +0100
-Subject: [PATCH 66/70] dt-bindings: usb: wch,ch334: Allow the hard-wired
+Subject: [PATCH 66/71] dt-bindings: usb: wch,ch334: Allow the hard-wired
  downstream devices
 
 The binding refers to usb-hub.yaml, which describes the devices on the

@@ -1,7 +1,7 @@
 From 5fb9031266d71f8c5bd733690114928564c81592 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:04:25 +0100
-Subject: [PATCH 26/70] ARM: configs: Add rk3506_plc.config fragment for the
+Subject: [PATCH 26/71] ARM: configs: Add rk3506_plc.config fragment for the
  Luckfox Lyra PLC
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>

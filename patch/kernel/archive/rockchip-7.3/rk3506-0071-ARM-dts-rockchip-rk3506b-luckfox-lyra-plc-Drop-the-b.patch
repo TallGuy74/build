@@ -1,0 +1,32 @@
+From 3efec198c213adc8c76d31b32fe840b8c3cbc7b1 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 22:10:48 +0100
+Subject: [PATCH 71/71] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Drop the
+ backlight supply
+
+The backlight named vcc_3v3 as its power supply. That rail is the
+board's always-on 3.3 V, so it cannot be switched off, but its presence
+makes pwm-backlight disable the PWM at brightness 0, on the assumption
+that cutting the supply turns the light off. The RK3506 PWM v4 leaves
+the pin at whatever level it had when disabled, so brightness 0 could
+leave the backlight fully on.
+
+Without a supply or an enable GPIO, pwm-backlight keeps the PWM running
+at 0 % duty for brightness 0, a constant inactive level, and the
+backlight goes dark. Verified on the board by driving the channel by
+hand at 0 % duty with inverted polarity.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 94922cfbc..4644a26a1 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -71,7 +71,6 @@ backlight: backlight {
+ 		pwms = <&pwm0_4ch_2 0 25000 PWM_POLARITY_INVERTED>;
+ 		brightness-levels = <0 20 40 60 80 100 120 140 160 180 200 220 240 255>;
+ 		default-brightness-level = <10>;
+-		power-supply = <&vcc_3v3>;
+ 	};
+ 
+ 	leds {

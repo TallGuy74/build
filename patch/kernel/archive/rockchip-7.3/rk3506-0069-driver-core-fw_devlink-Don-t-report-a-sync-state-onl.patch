@@ -1,7 +1,7 @@
 From a6e0bf4931a82cb40d82e0974e8ae73976b473b9 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 13:23:10 +0100
-Subject: [PATCH 69/70] driver core: fw_devlink: Don't report a sync-state-only
+Subject: [PATCH 69/71] driver core: fw_devlink: Don't report a sync-state-only
  link to a probed consumer
 
 fw_devlink_create_devlink() reports an error when device_link_add()

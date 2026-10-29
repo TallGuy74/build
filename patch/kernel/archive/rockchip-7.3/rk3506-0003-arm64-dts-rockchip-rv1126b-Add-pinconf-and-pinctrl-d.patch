@@ -1,7 +1,7 @@
 From 52a1cd056d34cf114f855a6e7975f8714f519d9c Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:53 +0800
-Subject: [PATCH 03/70] arm64: dts: rockchip: rv1126b: Add pinconf and pinctrl
+Subject: [PATCH 03/71] arm64: dts: rockchip: rv1126b: Add pinconf and pinctrl
  dtsi for rv1126b
 
 Add the core pinctrl device tree node and pin definitions for the

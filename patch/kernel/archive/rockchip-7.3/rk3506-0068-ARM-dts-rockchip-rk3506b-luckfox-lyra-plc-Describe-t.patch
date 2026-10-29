@@ -1,7 +1,7 @@
 From 358b72596cd95f27f474138a12c1da4639104ebc Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 12:24:18 +0100
-Subject: [PATCH 68/70] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Describe
+Subject: [PATCH 68/71] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Describe
  the USB hub and the Wi-Fi module
 
 Replace the rfkill-gpio node for the AIC8800DC power pin with the

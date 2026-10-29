@@ -1,7 +1,7 @@
 From 305cc71ae67f0181d2353519bc219e57d1c1fb22 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 23:50:58 +0100
-Subject: [PATCH 44/70] ARM: dts: rockchip: rk3506: Add the CPU OPP table and a
+Subject: [PATCH 44/71] ARM: dts: rockchip: rk3506: Add the CPU OPP table and a
  thermal zone
 
 Operating points from the vendor tree (850 mV up to 1.2 GHz, 975 mV at
