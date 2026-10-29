@@ -1,0 +1,27 @@
+From c77abb40f27f96cc0446de3a3cc060c14999445e Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 12:24:18 +0100
+Subject: [PATCH 66/68] dt-bindings: usb: wch,ch334: Allow the hard-wired
+ downstream devices
+
+The binding refers to usb-hub.yaml, which describes the devices on the
+hub's ports as child nodes, but closes the node with
+additionalProperties, so a hub with a soldered device behind it fails
+validation. Use unevaluatedProperties so the referenced schema's child
+nodes and address cells are accepted.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/Documentation/devicetree/bindings/usb/wch,ch334.yaml b/Documentation/devicetree/bindings/usb/wch,ch334.yaml
+index 2fdca14dc..1dd7d36d9 100644
+--- a/Documentation/devicetree/bindings/usb/wch,ch334.yaml
++++ b/Documentation/devicetree/bindings/usb/wch,ch334.yaml
+@@ -46,7 +46,7 @@ required:
+   - compatible
+   - reg
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |

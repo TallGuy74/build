@@ -1,7 +1,7 @@
 From 7e8892dd0cc025e3a83d5ad42808d28e2a790f4f Mon Sep 17 00:00:00 2001
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Date: Mon, 20 Apr 2026 06:52:40 -0700
-Subject: [PATCH 29/66] pwm: Add rockchip PWMv4 driver
+Subject: [PATCH 29/68] pwm: Add rockchip PWMv4 driver
 
 The Rockchip RK3576 brings with it a new PWM IP, in downstream code
 referred to as "v4". This new IP is different enough from the previous

@@ -1,0 +1,61 @@
+From 41e7c6c54adb3c9b8fdf7b27d70d0545fb9ee19f Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 12:24:18 +0100
+Subject: [PATCH 67/68] usb: misc: onboard_usb_dev: Add the AICSemi AIC8800DC
+ Wi-Fi/BT module
+
+The AIC8800DC is a USB Wi-Fi and Bluetooth module soldered onto boards
+such as the Luckfox Lyra, powered through a GPIO-switched rail. Let the
+onboard device driver switch that rail: without it the rail is either
+hogged on (no suspend handling) or raised by a late probe, in which
+case the module can attach to its hub while still booting and fail its
+first descriptor read.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+index 11508ed4d..f22ea3c83 100644
+--- a/drivers/usb/misc/onboard_usb_dev.c
++++ b/drivers/usb/misc/onboard_usb_dev.c
+@@ -564,6 +564,7 @@ static struct platform_driver onboard_dev_driver = {
+ 
+ /************************** USB driver **************************/
+ 
++#define VENDOR_ID_AICSEMI	0xa69c
+ #define VENDOR_ID_BISON		0x5986
+ #define VENDOR_ID_CORECHIPS	0x3431
+ #define VENDOR_ID_CYPRESS	0x04b4
+@@ -650,6 +651,7 @@ static void onboard_dev_usbdev_disconnect(struct usb_device *udev)
+ }
+ 
+ static const struct usb_device_id onboard_dev_id_table[] = {
++	{ USB_DEVICE(VENDOR_ID_AICSEMI, 0x88dc) }, /* AIC8800DC 2.4/5GHz WiFi + BT */
+ 	{ USB_DEVICE(VENDOR_ID_BISON, 0x1198) }, /* Bison Electronics Inc. Integrated Camera */
+ 	{ USB_DEVICE(VENDOR_ID_CORECHIPS, 0x6241) }, /* SL6341 2.0 HUB */
+ 	{ USB_DEVICE(VENDOR_ID_CORECHIPS, 0x6341) }, /* SL6341 3.0 HUB */
+diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
+index 3523f8f8a..4e09034a7 100644
+--- a/drivers/usb/misc/onboard_usb_dev.h
++++ b/drivers/usb/misc/onboard_usb_dev.h
+@@ -59,6 +59,13 @@ static const struct onboard_dev_pdata realtek_rtl8188etv_data = {
+ 	.is_hub = false,
+ };
+ 
++static const struct onboard_dev_pdata aicsemi_aic8800dc_data = {
++	.reset_us = 0,
++	.num_supplies = 1,
++	.supply_names = { "vdd" },
++	.is_hub = false,
++};
++
+ static const struct onboard_dev_pdata ti_tusb8020b_data = {
+ 	.reset_us = 3000,
+ 	.num_supplies = 1,
+@@ -170,6 +177,7 @@ static const struct of_device_id onboard_dev_match[] = {
+ 	{ .compatible = "usb3431,6241", .data = &corechips_sl6341_data, },
+ 	{ .compatible = "usb3431,6341", .data = &corechips_sl6341_data, },
+ 	{ .compatible = "usb5986,1198", .data = &bison_intcamera_data, },
++	{ .compatible = "usba69c,88dc", .data = &aicsemi_aic8800dc_data, },
+ 	{}
+ };
+ 

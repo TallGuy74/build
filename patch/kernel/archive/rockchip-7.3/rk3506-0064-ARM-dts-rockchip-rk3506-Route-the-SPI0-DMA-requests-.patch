@@ -1,7 +1,7 @@
 From c390707f8bd378ed4f09f6572d6b8464e35476a1 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 11:32:55 +0100
-Subject: [PATCH 64/66] ARM: dts: rockchip: rk3506: Route the SPI0 DMA requests
+Subject: [PATCH 64/68] ARM: dts: rockchip: rk3506: Route the SPI0 DMA requests
  through the mux
 
 Add the DMAC0 request-line mux and give spi0 its tx/rx channels on

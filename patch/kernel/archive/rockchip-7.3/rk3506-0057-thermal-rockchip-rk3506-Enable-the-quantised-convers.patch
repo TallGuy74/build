@@ -1,7 +1,7 @@
 From 5dd09b15ee268d2a801808fa431135a0d332eadb Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 08:11:52 +0100
-Subject: [PATCH 57/66] thermal: rockchip: rk3506: Enable the quantised
+Subject: [PATCH 57/68] thermal: rockchip: rk3506: Enable the quantised
  conversion select
 
 The RK3506 code table assumes the TSADC's Q_SEL conversion mode, which

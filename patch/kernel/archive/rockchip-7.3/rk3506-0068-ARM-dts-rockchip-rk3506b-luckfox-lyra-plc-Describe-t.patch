@@ -1,0 +1,87 @@
+From 358b72596cd95f27f474138a12c1da4639104ebc Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 12:24:18 +0100
+Subject: [PATCH 68/68] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Describe
+ the USB hub and the Wi-Fi module
+
+Replace the rfkill-gpio node for the AIC8800DC power pin with the
+module's supply: a fixed regulator on GPIO1_C5, consumed by the module's
+node under port 1 of the CH334 hub, so the onboard USB device driver
+powers it in sequence with the hub (and off in suspend). Powered by
+rfkill-gpio at probe time the module raced the hub's port power and
+failed its first descriptor read on every boot.
+
+The software kill switch is not lost: the Wi-Fi driver registers the
+usual cfg80211 rfkill for its wiphy and Bluetooth has its hci rfkill.
+
+Enable the onboard USB device driver in the PLC config fragment.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 6e2334af6..94922cfbc 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -50,14 +50,20 @@ button-user {
+ 	/*
+ 	 * GPIO1_C5 is the power enable of the AIC8800DC Wi-Fi/BT module (the
+ 	 * vendor tree calls it BT,power_gpio and lets rfkill raise it; the chip
+-	 * only shows up on the USB hub once it is high). The module carries
+-	 * both radios, so this one switch cuts Bluetooth too.
++	 * only shows up on the USB hub once it is high). Described as the
++	 * module's supply, switched by the onboard USB device driver from the
++	 * hub's port node below; the module carries both radios, so this one
++	 * rail cuts Bluetooth too.
+ 	 */
+-	rfkill-wlan {
+-		compatible = "rfkill-gpio";
+-		label = "aic8800-power";
+-		radio-type = "wlan";
+-		shutdown-gpios = <&gpio1 RK_PC5 GPIO_ACTIVE_HIGH>;
++	vcc_wifi: regulator-wifi {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_wifi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio1 RK_PC5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		startup-delay-us = <100000>;
++		vin-supply = <&vcc_3v3>;
+ 	};
+ 
+ 	backlight: backlight {
+@@ -340,7 +346,25 @@ &usb_otg0 {
+ 
+ &usb_otg1 {
+ 	dr_mode = "host";
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
++
++	/* WCH CH334 four-port hub; the Wi-Fi/BT module hangs off its port 1 */
++	hub_2_0: hub@1 {
++		compatible = "usb1a86,8091";
++		reg = <1>;
++		vdd33-supply = <&vcc_3v3>;
++		v5-supply = <&vcc_3v3>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		wifi: wifi@1 {
++			compatible = "usba69c,88dc";
++			reg = <1>;
++			vdd-supply = <&vcc_wifi>;
++		};
++	};
+ };
+ 
+ &wdt0 {
+diff --git a/arch/arm/configs/rk3506_plc.config b/arch/arm/configs/rk3506_plc.config
+index 64f10a0ad..24a4e52ed 100644
+--- a/arch/arm/configs/rk3506_plc.config
++++ b/arch/arm/configs/rk3506_plc.config
+@@ -87,3 +87,4 @@ CONFIG_CAN_DEV=m
+ CONFIG_CAN_CALC_BITTIMING=y
+ CONFIG_CAN_ROCKCHIP_RK3576=m
+ CONFIG_ROCKCHIP_DMAMUX=y
++CONFIG_USB_ONBOARD_DEV=y
