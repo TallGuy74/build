@@ -42,9 +42,10 @@ function custom_kernel_config__luckfox-lyra-plc_drivers() {
 	opts_m+=(CAN CAN_RAW CAN_BCM CAN_DEV CAN_CALC_BITTIMING CAN_ROCKCHIP CAN_RK3576 CAN_ROCKCHIP_RK3576)
 }
 
-# The radxa DKMS driver needs three fixes on this board (firmware path on re-probe, ARP offload off, Bluetooth reset on
-# close); see patch/misc/aic8800/aic8800-usb-dkms-lyra-plc-fixes.patch. The radxa-aic8800 extension installs and builds
-# the package at sort id 500; patch its source in the chroot afterwards and build the modules once more.
+# The radxa DKMS driver needs five fixes on this board (firmware path on re-probe, ARP offload off, Bluetooth reset on
+# close, driver data on the interface instead of the onboard-usb-dev owned USB device, filp_open() from kernel threads
+# on 7.x); see patch/misc/aic8800/aic8800-usb-dkms-lyra-plc-fixes.patch. The radxa-aic8800 extension installs and
+# builds the package at sort id 500; patch its source in the chroot afterwards and build the modules once more.
 function post_install_kernel_debs__600_patch_aic8800_dkms_for_lyra_plc() {
 	declare src_dir
 	src_dir="$(find "${SDCARD}/usr/src" -maxdepth 1 -type d -name 'aic8800-usb-*' | head -1)"

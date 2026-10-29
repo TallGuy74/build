@@ -1,4 +1,4 @@
-Three fixes to the radxa aic8800-usb DKMS driver (5.0+git20260123) for the AIC8800DC on the Luckfox Lyra PLC,
+Five fixes to the radxa aic8800-usb DKMS driver (5.0+git20260123) for the AIC8800DC on the Luckfox Lyra PLC,
 applied to /usr/src in the image chroot by the board file after the radxa-aic8800 extension installed the package:
 
 1. rwnx_platform.c: rwnx_plat_patch_load() appends the chip directory to the module-global firmware path on every
@@ -8,6 +8,22 @@ applied to /usr/src in the image chroot by the board file after the radxa-aic880
    kernel never learns its peers' MACs; on this network the board was unreachable from Wi-Fi clients.
 3. aic_btusb.c: set HCI_QUIRK_RESET_ON_CLOSE (hci_set_quirk() on kernels that have it). Without it the controller
    keeps its LE state across a close and the next open logs "unexpected event for opcode 0x2002/0x2039".
+
+4. aicwf_usb.c (aic8800_fdrv and aic_load_fw): the probe stored its bus pointer with dev_set_drvdata() on the
+   usb_device instead of on its own usb_interface. On mainline the usb_device is bound to the onboard-usb-dev
+   usb_device_driver, whose drvdata this overwrote; the next disconnect of the module (power-off through its
+   regulator, or a failed re-probe resetting the chip) then oopsed in onboard_dev_usbdev_disconnect() ->
+   sysfs_remove_link() inside the hub worker, which died holding the kernfs lock and froze every sysfs access.
+   Point the driver's device at the interface, which all its dev_get_drvdata() users read through the same pointer.
+   That slot is the one usb_set_intfdata() uses, so disconnect/suspend/resume now reach the aic_usb_dev through the
+   bus (bus_if->bus_priv.usb) instead of usb_get_intfdata().
+
+5. aic_init_fs.h (new, in all three modules) + an #include in the five files that call filp_open(): Linux 7.x roots
+   kernel threads in an empty nullfs and path lookups from them must run under scoped_with_init_fs(). The driver
+   opens its firmware with filp_open(), so every probe from the USB hub worker (module power cycle through
+   onboard-usb-dev, USB reset, reset-resume) failed with "fmacfw_patch_8800dc_u02.bin file failed to open" (-ENOENT);
+   only the probe from modprobe at boot worked. The header wraps filp_open() in scoped_with_init_fs() where the
+   kernel defines it and is a no-op on older kernels.
 
 --- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
 +++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
@@ -79,3 +95,239 @@ applied to /usr/src in the image chroot by the board file after the radxa-aic880
          AICBT_DBG("%s: Set HCI_QUIRK_RESET_ON_CLOSE", __func__);
      }
  #endif
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aicwf_usb.c
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aicwf_usb.c
+@@ -2429,7 +2429,8 @@
+ 
+ 
+     usb_dev->udev = usb;
+-    usb_dev->dev = &usb->dev;
++    /* Lyra PLC: the usb_device's drvdata belongs to its usb_device_driver (onboard-usb-dev); use our interface */
++    usb_dev->dev = &intf->dev;
+     usb_set_intfdata(intf, usb_dev);
+ 
+ 	ret = aicwf_usb_chipmatch(usb_dev, id->idVendor, id->idProduct);
+@@ -2525,10 +2526,18 @@
+     return ret;
+ }
+ 
++/* Lyra PLC: probe stores the aicwf_bus in the interface's drvdata (dev_set_drvdata on usb_dev->dev == &intf->dev,
++ * the slot usb_set_intfdata() uses), so reach the aic_usb_dev through the bus. */
++static struct aic_usb_dev *aicwf_usb_dev_from_intf(struct usb_interface *intf)
++{
++    struct aicwf_bus *bus_if = usb_get_intfdata(intf);
++    return bus_if ? bus_if->bus_priv.usb : NULL;
++}
++
+ static void aicwf_usb_disconnect(struct usb_interface *intf)
+ {
+     struct aic_usb_dev *usb_dev =
+-            (struct aic_usb_dev *) usb_get_intfdata(intf);
++            aicwf_usb_dev_from_intf(intf);
+     AICWFDBG(LOGINFO, "%s Enter\r\n", __func__);
+ 
+ 	if(g_rwnx_plat->wait_disconnect_cb == false){
+@@ -2566,7 +2575,7 @@
+ static int aicwf_usb_suspend(struct usb_interface *intf, pm_message_t state)
+ {
+     struct aic_usb_dev *usb_dev =
+-    (struct aic_usb_dev *) usb_get_intfdata(intf);
++    aicwf_usb_dev_from_intf(intf);
+     struct rwnx_vif *rwnx_vif, *tmp;
+         
+     AICWFDBG(LOGINFO, "%s enter\r\n", __func__);
+@@ -2595,7 +2604,7 @@
+ static int aicwf_usb_resume(struct usb_interface *intf)
+ {
+     struct aic_usb_dev *usb_dev =
+-         (struct aic_usb_dev *) usb_get_intfdata(intf);
++         aicwf_usb_dev_from_intf(intf);
+     struct rwnx_vif *rwnx_vif, *tmp;
+     AICWFDBG(LOGINFO, "%s enter\r\n", __func__);
+     list_for_each_entry_safe(rwnx_vif, tmp, &usb_dev->rwnx_hw->vifs, list) {
+--- a/USB/driver_fw/drivers/aic8800/aic_load_fw/aicwf_usb.c
++++ b/USB/driver_fw/drivers/aic8800/aic_load_fw/aicwf_usb.c
+@@ -1697,7 +1697,8 @@
+     }
+ 
+     usb_dev->udev = usb;
+-    usb_dev->dev = &usb->dev;
++    /* Lyra PLC: the usb_device's drvdata belongs to its usb_device_driver (onboard-usb-dev); use our interface */
++    usb_dev->dev = &intf->dev;
+     ret = aicloadfw_chipmatch(usb_dev, id->idVendor, id->idProduct);
+     if (ret) {
+         AICWFDBG(LOGERROR, "%s chip unsupport.\r\n", __func__);
+@@ -1795,10 +1796,18 @@
+     return ret;
+ }
+ 
++/* Lyra PLC: probe stores the aicwf_bus in the interface's drvdata (dev_set_drvdata on usb_dev->dev == &intf->dev,
++ * the slot usb_set_intfdata() uses), so reach the aic_usb_dev through the bus. */
++static struct aic_usb_dev *aicwf_usb_dev_from_intf(struct usb_interface *intf)
++{
++    struct aicwf_bus *bus_if = usb_get_intfdata(intf);
++    return bus_if ? bus_if->bus_priv.usb : NULL;
++}
++
+ static void aicwf_usb_disconnect(struct usb_interface *intf)
+ {
+     struct aic_usb_dev *usb_dev =
+-            (struct aic_usb_dev *) usb_get_intfdata(intf);
++            aicwf_usb_dev_from_intf(intf);
+ 
+ 	printk("%s enter \r\n", __func__);
+ 
+@@ -1816,7 +1825,7 @@
+ static int aicwf_usb_suspend(struct usb_interface *intf, pm_message_t state)
+ {
+     struct aic_usb_dev *usb_dev =
+-        (struct aic_usb_dev *) usb_get_intfdata(intf);
++        aicwf_usb_dev_from_intf(intf);
+ 
+     aicwf_usb_state_change(usb_dev, USB_SLEEP_ST);
+     aicwf_bus_stop(usb_dev->bus_if);
+@@ -1826,7 +1835,7 @@
+ static int aicwf_usb_resume(struct usb_interface *intf)
+ {
+     struct aic_usb_dev *usb_dev =
+-        (struct aic_usb_dev *) usb_get_intfdata(intf);
++        aicwf_usb_dev_from_intf(intf);
+ 
+     if (usb_dev->state == USB_UP_ST)
+         return 0;
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aicwf_compat_8800dc.c
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aicwf_compat_8800dc.c
+@@ -1,4 +1,5 @@
+ #include "rwnx_main.h"
++#include "aic_init_fs.h" /* Lyra PLC: filp_open() from kthreads on 7.x */
+ #include "rwnx_msg_tx.h"
+ #include "reg_access.h"
+ #include "rwnx_platform.h"
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_msg_tx.c
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_msg_tx.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include "rwnx_msg_tx.h"
++#include "aic_init_fs.h" /* Lyra PLC: filp_open() from kthreads on 7.x */
+ #include "rwnx_mod_params.h"
+ #include "reg_access.h"
+ #ifdef CONFIG_RWNX_BFMER
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include "aic_init_fs.h" /* Lyra PLC: filp_open() from kthreads on 7.x */
+ #include <linux/firmware.h>
+ #include <linux/delay.h>
+ #include <linux/vmalloc.h>
+--- a/USB/driver_fw/drivers/aic8800/aic_load_fw/aicbluetooth.c
++++ b/USB/driver_fw/drivers/aic8800/aic_load_fw/aicbluetooth.c
+@@ -1,4 +1,5 @@
+ #include <linux/version.h>
++#include "aic_init_fs.h" /* Lyra PLC: filp_open() from kthreads on 7.x */
+ #include <linux/vmalloc.h>
+ #include "aicbluetooth_cmds.h"
+ #include "aicwf_usb.h"
+--- a/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
++++ b/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
+@@ -22,6 +22,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include "aic_init_fs.h" /* Lyra PLC: filp_open() from kthreads on 7.x */
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+--- /dev/null
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aic_init_fs.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Linux 7.x roots kernel threads (the USB hub worker that probes a re-enumerated device, workqueues) in an empty
++ * nullfs; path lookups from them must run under scoped_with_init_fs() to see the userspace root. This driver opens
++ * its firmware and calibration files with filp_open(), which therefore failed with -ENOENT whenever the device was
++ * probed from the hub worker (power cycle, USB reset, reset-resume) instead of from modprobe. Route every
++ * filp_open() through the init fs where the kernel has it; older kernels are unchanged.
++ */
++#ifndef AIC_INIT_FS_H
++#define AIC_INIT_FS_H
++
++#include <linux/fs.h>
++#include <linux/fs_struct.h>
++
++#ifdef scoped_with_init_fs
++static inline struct file *aic_filp_open(const char *path, int flags, umode_t mode)
++{
++	struct file *fp;
++
++	scoped_with_init_fs()
++		fp = filp_open(path, flags, mode);
++	return fp;
++}
++#define filp_open(path, flags, mode) aic_filp_open(path, flags, mode)
++#endif
++
++#endif /* AIC_INIT_FS_H */
+--- /dev/null
++++ b/USB/driver_fw/drivers/aic8800/aic_load_fw/aic_init_fs.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Linux 7.x roots kernel threads (the USB hub worker that probes a re-enumerated device, workqueues) in an empty
++ * nullfs; path lookups from them must run under scoped_with_init_fs() to see the userspace root. This driver opens
++ * its firmware and calibration files with filp_open(), which therefore failed with -ENOENT whenever the device was
++ * probed from the hub worker (power cycle, USB reset, reset-resume) instead of from modprobe. Route every
++ * filp_open() through the init fs where the kernel has it; older kernels are unchanged.
++ */
++#ifndef AIC_INIT_FS_H
++#define AIC_INIT_FS_H
++
++#include <linux/fs.h>
++#include <linux/fs_struct.h>
++
++#ifdef scoped_with_init_fs
++static inline struct file *aic_filp_open(const char *path, int flags, umode_t mode)
++{
++	struct file *fp;
++
++	scoped_with_init_fs()
++		fp = filp_open(path, flags, mode);
++	return fp;
++}
++#define filp_open(path, flags, mode) aic_filp_open(path, flags, mode)
++#endif
++
++#endif /* AIC_INIT_FS_H */
+--- /dev/null
++++ b/USB/driver_fw/drivers/aic_btusb/aic_init_fs.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Linux 7.x roots kernel threads (the USB hub worker that probes a re-enumerated device, workqueues) in an empty
++ * nullfs; path lookups from them must run under scoped_with_init_fs() to see the userspace root. This driver opens
++ * its firmware and calibration files with filp_open(), which therefore failed with -ENOENT whenever the device was
++ * probed from the hub worker (power cycle, USB reset, reset-resume) instead of from modprobe. Route every
++ * filp_open() through the init fs where the kernel has it; older kernels are unchanged.
++ */
++#ifndef AIC_INIT_FS_H
++#define AIC_INIT_FS_H
++
++#include <linux/fs.h>
++#include <linux/fs_struct.h>
++
++#ifdef scoped_with_init_fs
++static inline struct file *aic_filp_open(const char *path, int flags, umode_t mode)
++{
++	struct file *fp;
++
++	scoped_with_init_fs()
++		fp = filp_open(path, flags, mode);
++	return fp;
++}
++#define filp_open(path, flags, mode) aic_filp_open(path, flags, mode)
++#endif
++
++#endif /* AIC_INIT_FS_H */
