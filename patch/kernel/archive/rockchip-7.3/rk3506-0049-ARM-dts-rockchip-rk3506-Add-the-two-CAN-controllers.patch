@@ -1,7 +1,7 @@
 From b798cb35065d9210fbefa455fb7e4a8ae974312e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 00:02:48 +0100
-Subject: [PATCH 49/61] ARM: dts: rockchip: rk3506: Add the two CAN controllers
+Subject: [PATCH 49/65] ARM: dts: rockchip: rk3506: Add the two CAN controllers
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 

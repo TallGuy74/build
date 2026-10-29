@@ -1,7 +1,7 @@
 From 9ef32172253112241ed9b5d48227ab023f5e58d1 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 16:49:55 +0100
-Subject: [PATCH 19/61] thermal: rockchip: Add RK3506 TSADC support
+Subject: [PATCH 19/65] thermal: rockchip: Add RK3506 TSADC support
 
 The RK3506 has a single TSADC channel on a 10-bit converter. Its sensor
 and analogue block are enabled through GRF_TSADC_CON before the first

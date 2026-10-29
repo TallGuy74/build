@@ -1,0 +1,25 @@
+From f509b3a9603a5079c2334190a32b9903fac68418 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 11:32:56 +0100
+Subject: [PATCH 65/65] staging: fbtft: fb_st7789v: Register with an SPI device
+ id table
+
+Use FBTFT_REGISTER_SPI_DRIVER() like the other converted panel drivers
+so that the SPI core stops warning that the driver has no spi_device_id
+for sitronix,st7789v.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
+index dd6e3603b..6d0e0a9c2 100644
+--- a/drivers/staging/fbtft/fb_st7789v.c
++++ b/drivers/staging/fbtft/fb_st7789v.c
+@@ -466,7 +466,7 @@ static struct fbtft_display display = {
+ 	},
+ };
+ 
+-FBTFT_REGISTER_DRIVER(DRVNAME, "sitronix,st7789v", &display);
++FBTFT_REGISTER_SPI_DRIVER(DRVNAME, "sitronix", "st7789v", &display);
+ 
+ MODULE_ALIAS("spi:" DRVNAME);
+ MODULE_ALIAS("platform:" DRVNAME);

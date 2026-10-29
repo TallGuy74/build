@@ -1,0 +1,76 @@
+From c390707f8bd378ed4f09f6572d6b8464e35476a1 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 11:32:55 +0100
+Subject: [PATCH 64/65] ARM: dts: rockchip: rk3506: Route the SPI0 DMA requests
+ through the mux
+
+Add the DMAC0 request-line mux and give spi0 its tx/rx channels on
+request lines 0 and 1 with select value 1, as the vendor tree wires
+them. Also give the cpu nodes their clock-frequency: the arm32 topology
+code prints an error for each cpu without one when it derives the CPU
+capacities.
+
+Enable the mux in the PLC config fragment.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506.dtsi b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+index ee16af6f6..e9e4a4570 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3506.dtsi
+@@ -48,6 +48,7 @@ cpu0: cpu@f00 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf00>;
++			clock-frequency = <1512000000>;
+ 			enable-method = "psci";
+ 			clocks = <&cru ARMCLK>;
+ 			operating-points-v2 = <&cpu0_opp_table>;
+@@ -58,6 +59,7 @@ cpu1: cpu@f01 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf01>;
++			clock-frequency = <1512000000>;
+ 			enable-method = "psci";
+ 			clocks = <&cru ARMCLK>;
+ 			operating-points-v2 = <&cpu0_opp_table>;
+@@ -68,6 +70,7 @@ cpu2: cpu@f02 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf02>;
++			clock-frequency = <1512000000>;
+ 			enable-method = "psci";
+ 			clocks = <&cru ARMCLK>;
+ 			operating-points-v2 = <&cpu0_opp_table>;
+@@ -372,6 +375,13 @@ dmac0: dma-controller@ff000000 {
+ 		arm,pl330-periph-burst;
+ 	};
+ 
++	dmamux0: dma-router {
++		compatible = "rockchip,rk3506-dmamux";
++		#dma-cells = <2>;
++		dma-masters = <&dmac0>;
++		rockchip,grf = <&grf>;
++	};
++
+ 	dmac1: dma-controller@ff008000 {
+ 		compatible = "arm,pl330", "arm,primecell";
+ 		reg = <0xff008000 0x4000>;
+@@ -444,6 +454,8 @@ spi0: spi@ff120000 {
+ 		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru CLK_SPI0>, <&cru PCLK_SPI0>;
+ 		clock-names = "spiclk", "apb_pclk";
++		dmas = <&dmamux0 0 1>, <&dmamux0 1 1>;
++		dma-names = "tx", "rx";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+diff --git a/arch/arm/configs/rk3506_plc.config b/arch/arm/configs/rk3506_plc.config
+index 42894cde2..64f10a0ad 100644
+--- a/arch/arm/configs/rk3506_plc.config
++++ b/arch/arm/configs/rk3506_plc.config
+@@ -86,3 +86,4 @@ CONFIG_CAN_BCM=m
+ CONFIG_CAN_DEV=m
+ CONFIG_CAN_CALC_BITTIMING=y
+ CONFIG_CAN_ROCKCHIP_RK3576=m
++CONFIG_ROCKCHIP_DMAMUX=y

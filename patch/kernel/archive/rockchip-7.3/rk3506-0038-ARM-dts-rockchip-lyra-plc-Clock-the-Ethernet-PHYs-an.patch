@@ -1,7 +1,7 @@
 From 35255b4690ab82332de0e937f861a7aef9e51a6e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 22:19:38 +0100
-Subject: [PATCH 38/61] ARM: dts: rockchip: lyra-plc: Clock the Ethernet PHYs
+Subject: [PATCH 38/65] ARM: dts: rockchip: lyra-plc: Clock the Ethernet PHYs
  and power the Wi-Fi module
 
 First boot on the hardware: both GMACs probe but never get a link, and

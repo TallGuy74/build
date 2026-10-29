@@ -1,7 +1,7 @@
 From d63a74cb2b9f22bd3760ca6da6d70f9c0903886e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 21:26:55 +0100
-Subject: [PATCH 37/61] ARM: dts: rockchip: lyra-plc: Rotate the ST7789V
+Subject: [PATCH 37/65] ARM: dts: rockchip: lyra-plc: Rotate the ST7789V
  framebuffer to landscape
 
 The 170x320 glass is mounted with its long side horizontal; without a
