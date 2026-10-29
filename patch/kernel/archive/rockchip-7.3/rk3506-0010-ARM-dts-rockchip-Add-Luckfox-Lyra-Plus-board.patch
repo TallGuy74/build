@@ -1,7 +1,7 @@
 From 0b9d0c307d8f15db394c3d515dd4f7eca13abf93 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:17:18 +0200
-Subject: [PATCH 10/55] ARM: dts: rockchip: Add Luckfox Lyra Plus board
+Subject: [PATCH 10/56] ARM: dts: rockchip: Add Luckfox Lyra Plus board
 
 The Luckfox Lyra Plus is an RK3506G2 board with 128 MiB of DDR3L.
 

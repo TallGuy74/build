@@ -1,7 +1,7 @@
 From f0f99a87b987f211169d24203030e4a6f7f2d31f Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 17:24:21 +0100
-Subject: [PATCH 35/55] ARM: configs: rk3506_plc: Enable the PWMv4 block, PWM
+Subject: [PATCH 35/56] ARM: configs: rk3506_plc: Enable the PWMv4 block, PWM
  backlight and regulator
 
 Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>

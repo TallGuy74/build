@@ -1,0 +1,45 @@
+From 0b61f1ffe6ef0c6c861f28897498d3c4b22936b2 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 08:07:35 +0100
+Subject: [PATCH 56/56] clk: rockchip: rk3506: Feed armclk_pll from the gated
+ PLL outputs
+
+The core source mux takes the PLL outputs behind their gates. With the
+raw PLLs modelled as the parents nothing in the clock tree holds
+clk_v1pll_gate while the cores run from v1pll, so clk_disable_unused()
+closes it about five seconds into boot and the cores stop dead: the
+board freezes with the console cursor on the display and the Ethernet
+link still up. Closing the gate by hand with the cores on v1pll froze a
+Luckfox Lyra at once; at run time the CAN driver happened to keep the
+gate open, which hid the problem in every live test.
+
+Use the gated outputs as the parents of armclk_pll so that selecting a
+PLL for the cores enables its gate and the unused-clock pass leaves it
+alone. gpll and v0pll gates are critical already; v1pll's is not.
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
+index f1e82fd1f..fcffd6760 100644
+--- a/drivers/clk/rockchip/clk-rk3506.c
++++ b/drivers/clk/rockchip/clk-rk3506.c
+@@ -242,8 +242,17 @@ static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
+ 	GATE(CLK_REF_DPHY_TOP, "clk_ref_dphy_top", "xin24m", 0,
+ 			RK3506_CLKGATE_CON(1), 5, GFLAGS),
+ 
+-	/* core */
+-	COMPOSITE_NOGATE(0, "armclk_pll", gpll_v0pll_v1pll_parents_p, CLK_IS_CRITICAL,
++	/*
++	 * core
++	 *
++	 * The PLL inputs of the core source mux pass through the PLL output
++	 * gates: closing clk_v1pll_gate while the cores run from v1pll stops
++	 * the cores (verified on a Luckfox Lyra, the board freezes at once).
++	 * Model the gated outputs as the parents so that selecting a PLL for
++	 * the cores keeps its gate open and clk_disable_unused() leaves it
++	 * alone; gpll and v0pll are critical anyway, v1pll is not.
++	 */
++	COMPOSITE_NOGATE(0, "armclk_pll", gpll_v0pll_v1pll_g_parents_p, CLK_IS_CRITICAL,
+ 			RK3506_CLKSEL_CON(15), 5, 2, MFLAGS, 0, 5, DFLAGS),
+ 	COMPOSITE_NOMUX(ACLK_CORE_ROOT, "aclk_core_root", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3506_CLKSEL_CON(15), 9, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,

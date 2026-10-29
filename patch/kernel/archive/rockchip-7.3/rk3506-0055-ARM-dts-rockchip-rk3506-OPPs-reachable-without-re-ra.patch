@@ -1,7 +1,7 @@
 From 80bf5ca3e72d233e5ac38ca263dd1da0a532ec88 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 01:42:49 +0100
-Subject: [PATCH 55/55] ARM: dts: rockchip: rk3506: OPPs reachable without
+Subject: [PATCH 55/56] ARM: dts: rockchip: rk3506: OPPs reachable without
  re-rating a PLL
 
 Pin v1pll to 1.2 GHz from the CRU node (nothing else uses it) and keep
