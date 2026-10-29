@@ -1,7 +1,7 @@
 From 70fb9c7024d8a57088768afc30e6662234d401cc Mon Sep 17 00:00:00 2001
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Date: Mon, 20 Apr 2026 06:52:39 -0700
-Subject: [PATCH 28/53] mfd: Add Rockchip mfpwm driver
+Subject: [PATCH 28/55] mfd: Add Rockchip mfpwm driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
