@@ -41,3 +41,22 @@ function custom_kernel_config__luckfox-lyra-plc_drivers() {
 		GPIO_CDEV GPIO_CDEV_V1 OF_OVERLAY)
 	opts_m+=(CAN CAN_RAW CAN_BCM CAN_DEV CAN_CALC_BITTIMING CAN_ROCKCHIP CAN_RK3576 CAN_ROCKCHIP_RK3576)
 }
+
+# The radxa DKMS driver needs three fixes on this board (firmware path on re-probe, ARP offload off, Bluetooth reset on
+# close); see patch/misc/aic8800/aic8800-usb-dkms-lyra-plc-fixes.patch. The radxa-aic8800 extension installs and builds
+# the package at sort id 500; patch its source in the chroot afterwards and build the modules once more.
+function post_install_kernel_debs__600_patch_aic8800_dkms_for_lyra_plc() {
+	declare src_dir
+	src_dir="$(find "${SDCARD}/usr/src" -maxdepth 1 -type d -name 'aic8800-usb-*' | head -1)"
+	if [[ -z "${src_dir}" ]]; then
+		display_alert "aic8800 dkms source not in the chroot, skipping the Lyra PLC driver fixes" "${BOARD}" "warn"
+		return 0
+	fi
+	declare ver="${src_dir##*/aic8800-usb-}"
+	declare kver
+	kver="$(find "${SDCARD}/lib/modules" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | head -1)"
+	display_alert "Patching aic8800 dkms ${ver} for the Lyra PLC and rebuilding for ${kver}" "${BOARD}" "info"
+	run_host_command_logged patch -p1 -d "${src_dir}" -i "${SRC}/patch/misc/aic8800/aic8800-usb-dkms-lyra-plc-fixes.patch"
+	declare -ag if_error_find_files_sdcard=("/var/lib/dkms/aic8800*/*/build/*.log")
+	use_clean_environment="yes" chroot_sdcard "dkms build -m aic8800-usb -v ${ver} -k ${kver} --force && dkms install -m aic8800-usb -v ${ver} -k ${kver} --force"
+}

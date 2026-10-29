@@ -1,0 +1,81 @@
+Three fixes to the radxa aic8800-usb DKMS driver (5.0+git20260123) for the AIC8800DC on the Luckfox Lyra PLC,
+applied to /usr/src in the image chroot by the board file after the radxa-aic8800 extension installed the package:
+
+1. rwnx_platform.c: rwnx_plat_patch_load() appends the chip directory to the module-global firmware path on every
+   probe while the path is only reset later in rwnx_cfg80211_init(); the second probe of a device therefore looked for
+   .../aic8800DC/aic8800DC/fmacfw_patch_8800dc_u02.bin and failed. Start from the base path before appending.
+2. aic8800_fdrv/Makefile: CONFIG_ARP_OFFLOAD=n. With ARP offload the firmware answers ARP for the board itself and the
+   kernel never learns its peers' MACs; on this network the board was unreachable from Wi-Fi clients.
+3. aic_btusb.c: set HCI_QUIRK_RESET_ON_CLOSE (hci_set_quirk() on kernels that have it). Without it the controller
+   keeps its LE state across a close and the next open logs "unexpected event for opcode 0x2002/0x2039".
+
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/rwnx_platform.c
+@@ -51,6 +51,7 @@
+ 
+ #define FW_PATH_MAX_LEN 200
+ extern char aic_fw_path[FW_PATH_MAX_LEN];
++extern void get_fw_path(char *fw_path);
+ 
+ //Parser state
+ #define INIT 0
+@@ -1669,6 +1670,10 @@
+     if(rwnx_hw->usbdev->chipid == PRODUCT_ID_AIC8800DC ||
+         rwnx_hw->usbdev->chipid == PRODUCT_ID_AIC8800DW){
+ #ifndef ANDROID_PLATFORM
++        /* the path is module-global: start from the base on every probe,
++         * or a re-probe looks in base/aic8800DC/aic8800DC */
++        memset(aic_fw_path, 0, sizeof(aic_fw_path));
++        get_fw_path(aic_fw_path);
+         strlcat(aic_fw_path, "/aic8800DC", sizeof(aic_fw_path));
+ #endif
+         AICWFDBG(LOGINFO, "testmode=%d\n", testmode);
+@@ -1808,6 +1813,10 @@
+         }
+     } else if(rwnx_hw->usbdev->chipid == PRODUCT_ID_AIC8800D80N) {
+ #ifndef ANDROID_PLATFORM
++        /* the path is module-global: start from the base on every probe,
++         * or a re-probe looks in base/aic8800D80N/aic8800D80N */
++        memset(aic_fw_path, 0, sizeof(aic_fw_path));
++        get_fw_path(aic_fw_path);
+         strlcat(aic_fw_path, "/aic8800D80N", sizeof(aic_fw_path));
+ #endif
+         if (testmode == FW_NORMAL_MODE) {
+@@ -1838,6 +1847,10 @@
+     }
+     else if(rwnx_hw->usbdev->chipid == PRODUCT_ID_AIC8800DLN) {
+ #ifndef ANDROID_PLATFORM
++        /* the path is module-global: start from the base on every probe,
++         * or a re-probe looks in base/aic8800DLN/aic8800DLN */
++        memset(aic_fw_path, 0, sizeof(aic_fw_path));
++        get_fw_path(aic_fw_path);
+         strlcat(aic_fw_path, "/aic8800DLN", sizeof(aic_fw_path));
+ #endif
+         if (testmode == FW_NORMAL_MODE) {
+--- a/USB/driver_fw/drivers/aic8800/aic8800_fdrv/Makefile
++++ b/USB/driver_fw/drivers/aic8800/aic8800_fdrv/Makefile
+@@ -60,7 +60,7 @@
+ CONFIG_SDIO_SUPPORT =n
+ CONFIG_USB_SUPPORT =y
+ CONFIG_RX_REORDER =y
+-CONFIG_ARP_OFFLOAD =y
++CONFIG_ARP_OFFLOAD =n
+ CONFIG_USE_5G = y
+ CONFIG_RADAR_OR_IR_DETECT =n
+ CONFIG_DOWNLOAD_FW =n
+--- a/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
++++ b/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
+@@ -5169,7 +5169,12 @@
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 1)
+     if (!reset_on_close){
+-        /* set_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks); */
++        /* the controller keeps LE state across a close otherwise */
++#ifdef hci_set_quirk
++        hci_set_quirk(hdev, HCI_QUIRK_RESET_ON_CLOSE);
++#else
++        set_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
++#endif
+         AICBT_DBG("%s: Set HCI_QUIRK_RESET_ON_CLOSE", __func__);
+     }
+ #endif
