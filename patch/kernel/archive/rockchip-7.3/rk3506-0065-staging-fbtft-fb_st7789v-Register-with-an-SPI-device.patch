@@ -1,7 +1,7 @@
 From f509b3a9603a5079c2334190a32b9903fac68418 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 11:32:56 +0100
-Subject: [PATCH 65/71] staging: fbtft: fb_st7789v: Register with an SPI device
+Subject: [PATCH 65/73] staging: fbtft: fb_st7789v: Register with an SPI device
  id table
 
 Use FBTFT_REGISTER_SPI_DRIVER() like the other converted panel drivers

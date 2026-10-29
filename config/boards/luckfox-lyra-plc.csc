@@ -32,11 +32,14 @@ function post_family_config__luckfox-lyra-plc_bootenv() {
 # edge = mainline 7.3 with the RK3506 patch series in patch/kernel/archive/rockchip-7.3 (rk3506-*.patch): the
 # board boots from the mainline rk3506.dtsi + rk3506b-luckfox-lyra-plc.dts; PWM comes from the posted (unmerged) PWMv4
 # series; cpufreq via the OPP table + PWM core supply; CAN0 via the ported rk3576_can driver.
-# Drivers the PLC needs that the shared rk35xx vendor config leaves out: the 1.9" ST7789V SPI panel (fbtft),
-# Hynitron CST816S touch (backported from mainline), PCF8563 RTC, SHTC3 sensor, the rk3576-type CAN-FD block.
+# Drivers the PLC needs that the shared rk35xx vendor config leaves out: the 1.9" ST7789V SPI panel (fbtft on vendor,
+# panel-mipi-dbi on edge), Hynitron CST816S touch (backported from mainline), PCF8563 RTC, SHTC3 sensor, the
+# rk3576-type CAN-FD block. The console takes the panel over only once text is printed, so a quiet boot shows no
+# cursor before the splash.
 function custom_kernel_config__luckfox-lyra-plc_drivers() {
 	[[ "${BRANCH}" != "edge" ]] || opts_y+=(MMC_DW MMC_DW_ROCKCHIP USB_DWC2 USB_DWC2_DUAL_ROLE PHY_ROCKCHIP_INNO_USB2 STMMAC_ETH DWMAC_ROCKCHIP SPI_ROCKCHIP I2C_RK3X KEYBOARD_ADC ROCKCHIP_SARADC ROCKCHIP_THERMAL DW_WATCHDOG NVMEM_ROCKCHIP_OTP PINCTRL_ROCKCHIP GPIO_ROCKCHIP CLK_RK3506 LEDS_GPIO MFD_ROCKCHIP_MFPWM PWM PWM_ROCKCHIP_V4 BACKLIGHT_CLASS_DEVICE BACKLIGHT_PWM REGULATOR_PWM CPU_FREQ CPUFREQ_DT CPUFREQ_DT_PLATDEV CPU_FREQ_GOV_ONDEMAND CPU_FREQ_GOV_SCHEDUTIL CPU_THERMAL THERMAL ROCKCHIP_THERMAL RFKILL ROCKCHIP_DMAMUX USB_ONBOARD_DEV)
-	opts_y+=(VT VT_CONSOLE FB FB_TFT FB_TFT_ST7789V FRAMEBUFFER_CONSOLE LOGO LOGO_LINUX_CLUT224
+	[[ "${BRANCH}" != "edge" ]] || opts_m+=(DRM_PANEL_MIPI_DBI)
+	opts_y+=(VT VT_CONSOLE FB FB_TFT FB_TFT_ST7789V DUMMY_CONSOLE FRAMEBUFFER_CONSOLE FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER LOGO LOGO_LINUX_CLUT224
 		TOUCHSCREEN_HYNITRON_CST816X RTC_DRV_PCF8563 HWMON SENSORS_SHTC1
 		GPIO_CDEV GPIO_CDEV_V1 OF_OVERLAY)
 	opts_m+=(CAN CAN_RAW CAN_BCM CAN_DEV CAN_CALC_BITTIMING CAN_ROCKCHIP CAN_RK3576 CAN_ROCKCHIP_RK3576)
@@ -72,4 +75,17 @@ function post_family_tweaks__luckfox-lyra-plc_bt_selfheal() {
 	run_host_command_logged install -D -m 0755 "${src}/aic8800-bt-selfheal" "${SDCARD}/usr/local/sbin/aic8800-bt-selfheal"
 	run_host_command_logged install -D -m 0644 "${src}/aic8800-bt-selfheal@.service" "${SDCARD}/etc/systemd/system/aic8800-bt-selfheal@.service"
 	run_host_command_logged install -D -m 0644 "${src}/90-aic8800-bt-selfheal.rules" "${SDCARD}/etc/udev/rules.d/90-aic8800-bt-selfheal.rules"
+}
+
+# On edge the LCD is driven by panel-mipi-dbi, which loads the panel's init sequence as firmware named after the
+# display's compatible. Compile it from packages/bsp/luckfox-lyra-plc/lcd/luckfox,lyra-plc-lcd.txt, and put it in the
+# initramfs as well for when the DRM drivers are there (plymouth). The SPI core aliases the device by its first
+# compatible, which the generic driver does not list, so a modprobe alias makes udev load it.
+function post_family_tweaks__luckfox-lyra-plc_lcd() {
+	declare src="${SRC}/packages/bsp/luckfox-lyra-plc/lcd"
+	display_alert "Installing the LCD init sequence" "${BOARD}" "info"
+	run_host_command_logged mkdir -p "${SDCARD}/usr/lib/firmware"
+	run_host_command_logged "${src}/mipi-dbi-cmd" "${src}/luckfox,lyra-plc-lcd.txt" "${SDCARD}/usr/lib/firmware/luckfox,lyra-plc-lcd.bin"
+	run_host_command_logged install -D -m 0755 "${src}/lyra-plc-lcd-firmware" "${SDCARD}/etc/initramfs-tools/hooks/lyra-plc-lcd-firmware"
+	run_host_command_logged install -D -m 0644 "${src}/lyra-plc-lcd.conf" "${SDCARD}/etc/modprobe.d/lyra-plc-lcd.conf"
 }

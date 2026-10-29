@@ -1,0 +1,16 @@
+#!/bin/sh
+# panel-mipi-dbi loads the LCD's init sequence as firmware when it probes. When the
+# driver is in the initramfs (plymouth's hook copies the DRM drivers), the file
+# has to be there too, or the probe fails for good before the root fs is mounted.
+
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in
+prereqs) prereqs; exit 0 ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+fw=/usr/lib/firmware/luckfox,lyra-plc-lcd.bin
+[ -e "$fw" ] && copy_file firmware "$fw"
+exit 0

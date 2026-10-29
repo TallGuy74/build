@@ -1,7 +1,7 @@
 From 41cce7aaf753cd08a62e9a26a154f90d55e16c16 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 10:43:10 +0100
-Subject: [PATCH 61/71] ARM: dts: rockchip: rk3506: Vendor operating points up
+Subject: [PATCH 61/73] ARM: dts: rockchip: rk3506: Vendor operating points up
  to 1.512 GHz
 
 With armclk re-rating v1pll, carry the vendor tree points and their

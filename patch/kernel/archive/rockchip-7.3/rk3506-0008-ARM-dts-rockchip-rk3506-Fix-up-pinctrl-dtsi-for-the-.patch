@@ -1,7 +1,7 @@
 From df3a18a6e24caf21cebee435b351978c8b4060d2 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:16:52 +0200
-Subject: [PATCH 08/71] ARM: dts: rockchip: rk3506: Fix up pinctrl dtsi for the
+Subject: [PATCH 08/73] ARM: dts: rockchip: rk3506: Fix up pinctrl dtsi for the
  arch/arm tree
 
 Two build fixes for the rk3506 pinctrl dtsi as posted:

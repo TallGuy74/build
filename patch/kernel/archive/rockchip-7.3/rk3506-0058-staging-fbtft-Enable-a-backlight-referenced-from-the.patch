@@ -1,7 +1,7 @@
 From cc5f644d55a7d3f8f4b8567eb6a022a8231b543a Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 09:57:37 +0100
-Subject: [PATCH 58/71] staging: fbtft: Enable a backlight referenced from the
+Subject: [PATCH 58/73] staging: fbtft: Enable a backlight referenced from the
  panel node
 
 pwm-backlight keeps a backlight that is referenced by a phandle switched

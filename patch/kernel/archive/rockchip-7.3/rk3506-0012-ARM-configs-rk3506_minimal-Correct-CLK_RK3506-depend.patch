@@ -1,7 +1,7 @@
 From dbf7b227cd16b8b90abffc8618e670a3e710ee87 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:25:10 +0200
-Subject: [PATCH 12/71] ARM: configs: rk3506_minimal: Correct CLK_RK3506
+Subject: [PATCH 12/73] ARM: configs: rk3506_minimal: Correct CLK_RK3506
  dependency comment
 
 The symbol depends on "ARM || COMPILE_TEST", not on ARM alone. Comment
