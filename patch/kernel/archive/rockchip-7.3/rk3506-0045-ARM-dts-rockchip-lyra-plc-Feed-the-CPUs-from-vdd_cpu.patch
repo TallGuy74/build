@@ -1,7 +1,7 @@
 From dc3d892b42303a2d2e73197fa35bedb19b2c19fe Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Wed, 28 Oct 2026 23:50:58 +0100
-Subject: [PATCH 45/65] ARM: dts: rockchip: lyra-plc: Feed the CPUs from
+Subject: [PATCH 45/66] ARM: dts: rockchip: lyra-plc: Feed the CPUs from
  vdd_cpu, rfkill for the Wi-Fi module
 
 Point the CPUs at the PWM-controlled vdd_cpu so cpufreq scales the core

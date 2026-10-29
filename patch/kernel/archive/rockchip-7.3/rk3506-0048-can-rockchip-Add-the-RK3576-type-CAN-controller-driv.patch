@@ -1,7 +1,7 @@
 From 8d2cc9555520ce0642849ac34ad83d8d583780c6 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 00:02:48 +0100
-Subject: [PATCH 48/65] can: rockchip: Add the RK3576-type CAN controller
+Subject: [PATCH 48/66] can: rockchip: Add the RK3576-type CAN controller
  driver
 
 Port of the vendor 6.1 driver (drivers/net/can/rockchip/rk3576_can.c,

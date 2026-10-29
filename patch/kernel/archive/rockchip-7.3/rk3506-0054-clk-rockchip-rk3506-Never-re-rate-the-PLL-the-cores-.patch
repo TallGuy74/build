@@ -1,7 +1,7 @@
 From 974309e4f2527ac1d80cfb8e57026decf7cae44e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 01:42:49 +0100
-Subject: [PATCH 54/65] clk: rockchip: rk3506: Never re-rate the PLL the cores
+Subject: [PATCH 54/66] clk: rockchip: rk3506: Never re-rate the PLL the cores
  run from
 
 The previous approach let the CPU rate propagate into v1pll. Re-locking

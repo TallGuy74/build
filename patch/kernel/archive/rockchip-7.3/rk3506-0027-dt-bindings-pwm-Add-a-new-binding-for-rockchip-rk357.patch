@@ -1,7 +1,7 @@
 From 321c977e3dc2b1071b180fbeccdf750c3e418d6a Mon Sep 17 00:00:00 2001
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Date: Mon, 20 Apr 2026 06:52:38 -0700
-Subject: [PATCH 27/65] dt-bindings: pwm: Add a new binding for
+Subject: [PATCH 27/66] dt-bindings: pwm: Add a new binding for
  rockchip,rk3576-pwm
 
 The Rockchip RK3576 SoC has a newer PWM controller IP revision than

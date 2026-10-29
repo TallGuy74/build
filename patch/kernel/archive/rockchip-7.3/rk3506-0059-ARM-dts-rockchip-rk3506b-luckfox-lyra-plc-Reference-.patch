@@ -1,7 +1,7 @@
 From db53f3b518476fa3e06813442925cf9bde43cdf5 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 09:57:37 +0100
-Subject: [PATCH 59/65] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Reference
+Subject: [PATCH 59/66] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Reference
  the backlight from the panel
 
 The PWM backlight belongs to the ST7789V panel; reference it so the
