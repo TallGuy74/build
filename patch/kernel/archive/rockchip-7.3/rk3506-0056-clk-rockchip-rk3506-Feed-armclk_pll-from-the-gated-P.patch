@@ -1,7 +1,7 @@
 From 0b61f1ffe6ef0c6c861f28897498d3c4b22936b2 Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 08:07:35 +0100
-Subject: [PATCH 56/57] clk: rockchip: rk3506: Feed armclk_pll from the gated
+Subject: [PATCH 56/59] clk: rockchip: rk3506: Feed armclk_pll from the gated
  PLL outputs
 
 The core source mux takes the PLL outputs behind their gates. With the

@@ -1,7 +1,7 @@
 From b17675394ff8e830ebeee4b04be996cb360adeb0 Mon Sep 17 00:00:00 2001
 From: Ye Zhang <ye.zhang@rock-chips.com>
 Date: Sat, 27 Dec 2025 19:49:56 +0800
-Subject: [PATCH 06/57] pinctrl: rockchip: Add RK3506 RMIO support
+Subject: [PATCH 06/59] pinctrl: rockchip: Add RK3506 RMIO support
 
 On the RK3506 SoC, some pins support a secondary muxing layer via the
 RMIO (Rockchip Matrix I/O) block. This allows expanding the number of

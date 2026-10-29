@@ -1,0 +1,25 @@
+From ee151042f6392351af607fa2bbcf1fe6ec4cb4f7 Mon Sep 17 00:00:00 2001
+From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+Date: Thu, 29 Oct 2026 09:57:37 +0100
+Subject: [PATCH 59/59] ARM: dts: rockchip: rk3506b-luckfox-lyra-plc: Reference
+ the backlight from the panel
+
+The PWM backlight belongs to the ST7789V panel; reference it so the
+display driver enables it (the labelled node carries a phandle when the
+DTB is built with symbols, which otherwise leaves pwm-backlight waiting
+for a display driver that never comes).
+
+Signed-off-by: Bas Vermeulen <bas.vermeulen@blackstar.nl>
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+index 832dae6fc..6e2334af6 100644
+--- a/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
++++ b/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-plc.dts
+@@ -284,6 +284,7 @@ display@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <50000000>;
+ 		power-supply = <&vcc_3v3>;
++		backlight = <&backlight>;
+ 		/* fbtft (staging) properties; the sitronix,st7789v panel schema does not know them */
+ 		buswidth = <8>;
+ 		fps = <60>;

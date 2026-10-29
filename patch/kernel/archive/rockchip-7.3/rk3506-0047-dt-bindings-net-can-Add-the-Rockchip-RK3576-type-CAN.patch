@@ -1,7 +1,7 @@
 From 41988b23ee07456cb1024b2886a328e77897087e Mon Sep 17 00:00:00 2001
 From: Bas Vermeulen <bas.vermeulen@blackstar.nl>
 Date: Thu, 29 Oct 2026 00:02:47 +0100
-Subject: [PATCH 47/57] dt-bindings: net: can: Add the Rockchip RK3576-type CAN
+Subject: [PATCH 47/59] dt-bindings: net: can: Add the Rockchip RK3576-type CAN
  controller
 
 Classic CAN controller of the RK3576, RK3506 and RV1126B, with two

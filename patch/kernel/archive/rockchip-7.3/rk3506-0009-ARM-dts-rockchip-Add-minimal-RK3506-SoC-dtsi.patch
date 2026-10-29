@@ -1,7 +1,7 @@
 From beaa9f0e32abb604be8fd79ccc742a9f7f685c68 Mon Sep 17 00:00:00 2001
 From: Walter Dal Mut <walter.dalmut@corley.it>
 Date: Wed, 26 Aug 2026 11:17:06 +0200
-Subject: [PATCH 09/57] ARM: dts: rockchip: Add minimal RK3506 SoC dtsi
+Subject: [PATCH 09/59] ARM: dts: rockchip: Add minimal RK3506 SoC dtsi
 
 Add a minimal device tree description of the Rockchip RK3506, a triple
 Cortex-A7 SoC, covering only what is needed to reach a prompt on the
